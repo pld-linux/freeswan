@@ -5,9 +5,9 @@
 # _with_25x		- without FreeS/WAN's keying daemon to work with
 #			  the 2.5 kernel IPsec implementation
 # _without_modules      - build only library+programs, no kernel modules
-%define x509ver		x509-1.4.1
+%define x509ver		x509-1.4.3
 %define nat_tr_ver	0.6
-%define _25x_ver	20030720
+%define _25x_ver	20030803
 Summary:	Free IPSEC implemetation
 Summary(pl):	Publicznie dostêpna implementacja IPSEC
 Name:		freeswan
@@ -21,11 +21,11 @@ Source0:	ftp://ftp.xs4all.nl/pub/crypto/%{name}/%{name}-%{version}.tar.gz
 Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-pl-man-pages.tar.bz2
 # Source1-md5:	6bd0b509015a2795cfb895aaab0bbc55
 Source2:	http://www.strongsec.com/%{name}/%{x509ver}-%{name}-%{version}.tar.gz
-# Source2-md5:	5a76bed78f6aaf18d1509520ab7936fc
+# Source2-md5:	207e44ab5674ae68691ef52188ebda5f
 Source3:	http://open-source.arkoon.net/freeswan/NAT-Traversal-%{nat_tr_ver}.tar.gz
 # Source3-md5:	6858a8535aa2611769d17e86e6735db2
 Source4:	http://gondor.apana.org.au/~herbert/freeswan/%{version}/freeswan-%{version}-linux-ipsec-%{_25x_ver}.patch.gz
-# Source4-md5:	3e3fe930d050bc0b2cfe4c9b1efaf9b8
+# Source4-md5:	48d2be60229d7971d39a89dac578b18d
 Patch0:		%{name}-showhostkey.patch
 Patch1:		%{name}-init.patch
 Patch2:		%{name}-paths.patch
