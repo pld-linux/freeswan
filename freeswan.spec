@@ -1,4 +1,5 @@
 Summary:	Free IPSEC implemetation
+Summary:	Publicznie dostêpna implementacja IPSEC
 Name:		freeswan
 Version:	1.5
 Release:	1
@@ -10,7 +11,7 @@ Patch0:		%{name}-Makefiles.patch
 Patch1:		%{name}-manlink.patch	
 Patch2:		%{name}-config.patch	
 Patch3:		%{name}-init.patch	
-URL:		http://www.freeswan.org
+URL:		http://www.freeswan.org/
 Prereq:		/sbin/chkconfig
 Requires:	rc-scripts
 BuildRequires:	gmp-devel
@@ -22,7 +23,7 @@ The basic idea of IPSEC is to provide security functions
 level. It will be required in [62]IP version 6 (better known as IPng,
 the next generation) and is optional for the current IP, version 4.
 
-FreeS/WAN is a freely-distributable implementation of IPSEC protocol/
+FreeS/WAN is a freely-distributable implementation of IPSEC protocol.
 
 %prep
 %setup  -q
