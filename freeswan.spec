@@ -26,9 +26,7 @@ URL:		http://www.freeswan.org/
 Prereq:		/sbin/chkconfig
 Prereq:		rc-scripts
 BuildRequires:	gmp-devel
-BuildRequires:	kernel-source
 BuildRequires:  kernel-headers
-BuildRequires:	kernel-doc
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 Requires: 	gmp
 
