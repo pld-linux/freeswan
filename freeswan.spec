@@ -18,12 +18,11 @@ Patch0:		%{name}-showhostkey.patch
 Patch1:		%{name}-init.patch
 Patch2:		%{name}-des.patch
 URL:		http://www.freeswan.org/
-%{!?_without_dist_kernel:BuildRequires:	kernel-headers(freeswan)}
 BuildRequires:	gmp-devel
 Prereq:		/sbin/chkconfig
 Prereq:		rc-scripts
 Requires: 	gmp
-%{!?_without_dist_kernel:Requires:	kernel(freeswan)}
+%{!?_without_dist_kernel:Requires:	kernel(freeswan) >= %{version}-%{_rc}}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-%{_rc}-root-%(id -u -n)
 
 %define x509 1
