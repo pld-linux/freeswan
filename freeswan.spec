@@ -49,7 +49,7 @@ rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_sysconfdir}/freeswan,/etc/rc.d/init.d,/var/run/pluto}
 
 %{__make} install \
-	DESTDIR="$RPM_BUILD_ROOT" 
+	DESTDIR="$RPM_BUILD_ROOT"
 
 bzip2 -dc %{SOURCE1} | tar xf - -C $RPM_BUILD_ROOT%{_mandir}
 
@@ -60,13 +60,13 @@ gzip -9nf README CREDITS CHANGES BUGS \
 rm -rf $RPM_BUILD_ROOT
 
 %post
-/sbin/chkconfig --add ipsec 
+/sbin/chkconfig --add ipsec
 if [ -f /var/lock/subsys/ipsec ]; then
 	/etc/rc.d/init.d/ipsec restart >&2
 else
 	echo "Run '/etc/rc.d/init.d/ipsec start' to start IPSEC services." >&2
 fi
-    
+
 %preun
 if [ "$1" = "0" ]; then
 	if [ -f /var/lock/subsys/ipsec ]; then
