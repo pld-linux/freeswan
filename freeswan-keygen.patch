@@ -1,0 +1,44 @@
+diff -Naur freeswan-1.95.orig/utils/Makefile freeswan-1.95/utils/Makefile
+--- freeswan-1.95.orig/utils/Makefile	Wed Mar 13 15:36:51 2002
++++ freeswan-1.95/utils/Makefile	Wed Mar 13 15:37:38 2002
+@@ -69,17 +69,19 @@
+ 
+ # generate RSA private key... if, and only if, /etc/ipsec.secrets does
+ # not already exist
+-BLURB=-- not filled in because ipsec.secrets existed at build time --
++# BLURB=-- not filled in because ipsec.secrets existed at build time --
++# 
++# This will be done in %post in spec file (radzio@pld.org.pl)
+ secrets.eg:	secrets.proto ranbits rsasigkey
+-	rm -f $@
+-	umask 077 ; ( \
+-		sed '/yyy/,$$d' secrets.proto ; \
+-		if test ! -f $(CONFDIR)/ipsec.secrets ; \
+-		then ./rsasigkey --verbose $(RSAKEYBITS) ; \
+-		else echo "	# $(BLURB)" ; \
+-		fi ; \
+-		sed '1,/yyy/d' secrets.proto ; \
+-	) | egrep -v RCSID >$@
++#	rm -f $@
++#	umask 077 ; ( \
++#		sed '/yyy/,$$d' secrets.proto ; \
++#		if test ! -f $(CONFDIR)/ipsec.secrets ; \
++#		then ./rsasigkey --verbose $(RSAKEYBITS) ; \
++#		else echo "	# $(BLURB)" ; \
++#		fi ; \
++#		sed '1,/yyy/d' secrets.proto ; \
++#	) | egrep -v RCSID >$@
+ 
+ # force full secrets-file build
+ newsecrets:
+@@ -104,8 +106,8 @@
+ 		$(INSTMAN) $(PUB) $$f $(CMANDIR)/ipsec_$$f || exit 1 ; \
+ 		./manlink $(CMANDIR) ipsec_$$f ; \
+ 	done
+-	test -f $(CONFDIR)/ipsec.secrets || \
+-		$(INSTCONF) $(PRIV) secrets.eg $(CONFDIR)/ipsec.secrets
++#	test -f $(CONFDIR)/ipsec.secrets || \
++#		$(INSTCONF) $(PRIV) secrets.eg $(CONFDIR)/ipsec.secrets
+ 	test -f $(CONFDIR)/ipsec.conf || \
+ 		$(INSTCONF) $(PUB) conf.eg $(CONFDIR)/ipsec.conf
+ 	# main copy must go in RCDIR, BINDIR may not be mounted at boot time
