@@ -1,6 +1,6 @@
 Summary:	Free IPSEC implemetation
 Name:		freeswan
-Version:	1.3
+Version:	1.4
 Release:	0
 License:	GPL
 Group:		Networking/Daemons
