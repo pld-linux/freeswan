@@ -8,7 +8,7 @@ Group:		Networking/Daemons
 Group(de):	Netzwerkwesen/Server
 Group(pl):	Sieciowe/Serwery
 Source0:	ftp://ftp.xs4all.nl/pub/crypto/freeswan/%{name}-%{version}.tar.gz
-Source1:	%{name}-pl-man-pages.tar.bz2
+Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-pl-man-pages.tar.bz2
 Patch0:		%{name}-Makefiles.patch
 Patch1:		%{name}-manlink.patch
 Patch2:		%{name}-config.patch
