@@ -42,21 +42,18 @@ Requires:	gmp
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
-The basic idea of IPSEC is to provide security functions
+This package contains FreeS/WAN daemon and utilities.
+FreeS/WAN is a free implementation of the IPsec protocol for Linux.
+It allows to build secure tunnels through untrusted networks.
+The basic idea of IPsec is to provide security functions
 (authentication and encryption) at the IP (Internet Protocol) level.
-It will be required in IP version 6 (better known as IPng, the next
-generation) and is optional for the current IP, version 4.
-
-FreeS/WAN is a freely-distributable implementation of IPSEC protocol.
-FreeS/WAN utilities%{?with_x509: compiled with X.509 certificate support}.
 
 %description -l pl
-Podstawowa idea IPSEC to zapewnienie funkcji bezpieczeñstwa
-(autentykacji i szyfrowania) na poziomie IP. Bêdzie wymagany do IP w
-wersji 6 (znanego tak¿e jako IPng, IP nastêpnej generacji) i jest
-opcjonalny dla aktualnego IP, w wersji 4.
-
-FreeS/WAN jest darmow± implementacj± protoko³u IPSEC.
+Ten pakiet zawiera demona i narzêdzia FreeS/WAN.
+FreeS/WAN jest woln± implementacj± protoko³u IPsec dla Linuksa.
+Umo¿liwia zestawianie bezpiecznych tuneli przez niezaufane sieci.
+Podstawowa idea IPsec to zapewnienie funkcji bezpieczeñstwa
+(autentykacji i szyfrowania) na poziomie IP.
 
 %package -n kernel-net-ipsec
 Summary:	Kernel module for Linux IPSEC
@@ -104,7 +101,7 @@ Modu³ j±dra SMP wykorzystywany przez FreeS/WAN.
 %define _kver `echo "%{_kernel_ver}" |awk -F. '{print $2}'`
 %if %{with modules}
   install -d kernelsrc
-  lndir -silent /usr/src/linux kernelsrc
+  lndir -silent %{_kernelsrcdir} kernelsrc
   mv kernelsrc/.config kernelsrc/.config.old
   cp kernelsrc/.config.old kernelsrc/.config
   %if %{with dist_kernel}
@@ -144,7 +141,7 @@ CC=%{__cc}; export CC
 	INC_MANDIR=share/man \
 	FINALRCDIR=%{_sysconfdir}/rc.d/init.d \
 	FINALLIBEXECDIR=%{_libdir}/ipsec \
-        KERNELSRC="`pwd`/kernelsrc"
+	KERNELSRC="`pwd`/kernelsrc"
 
   install linux/net/ipsec/ipsec.o .
 
