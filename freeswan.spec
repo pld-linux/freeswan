@@ -13,7 +13,7 @@ Summary(pl):	Publicznie dostêpna implementacja IPSEC
 Name:		freeswan
 Version:	2.01
 %define _rel    0.4
-Release:        %{_rel}
+Release:	%{_rel}
 License:	GPL
 Group:		Networking/Daemons
 Source0:	ftp://ftp.xs4all.nl/pub/crypto/%{name}/%{name}-%{version}.tar.gz
@@ -36,12 +36,12 @@ BuildRequires:	rpmbuild(macros) >= 1.118
 PreReq:		rc-scripts
 Requires(post,preun):	/sbin/chkconfig
 Requires:	gawk
-Requires:       gmp
+Requires:	gmp
 %{!?_without_dist_kernel:%{!?_without_modules:BuildRequires:	kernel-headers}}
-%{!?_without_dist_kernel:%{!?_without_modules:BuildRequires:    kernel-source}}
-%{!?_without_dist_kernel:%{!?_without_modules:BuildRequires:    kernel-doc}}
+%{!?_without_dist_kernel:%{!?_without_modules:BuildRequires:	kernel-source}}
+%{!?_without_dist_kernel:%{!?_without_modules:BuildRequires:	kernel-doc}}
 # XFree86 is required to use usefull lndir
-%{!?_without_dist_kernel:%{!?_without_modules:BuildRequires:    XFree86}}
+%{!?_without_dist_kernel:%{!?_without_modules:BuildRequires:	XFree86}}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -62,15 +62,15 @@ opcjonalny dla aktualnego IP, w wersji 4.
 FreeS/WAN jest darmow± implementacj± protoko³u IPSEC.
 
 %package -n kernel-net-ipsec
-Summary:        Kernel module for Linux IPSEC
-Summary(pl):    Modu³ j±dra dla IPSEC
-Release:        %{_rel}@%{_kernel_ver_str}
-Group:          Base/Kernel
+Summary:	Kernel module for Linux IPSEC
+Summary(pl):	Modu³ j±dra dla IPSEC
+Release:	%{_rel}@%{_kernel_ver_str}
+Group:		Base/Kernel
 %{!?_without_dist_kernel:%requires_releq_kernel_up}
-PreReq:         modutils >= 2.4.6-4
-Requires(post,postun):  /sbin/depmod
-Requires:       %{name} = %{version}
-Conflicts:      kernel <= 2.4.20-9
+PreReq:		modutils >= 2.4.6-4
+Requires(post,postun):	/sbin/depmod
+Requires:	%{name} = %{version}
+Conflicts:	kernel <= 2.4.20-9
 
 %description -n kernel-net-ipsec
 Kernel module for FreeS/WAN.
@@ -79,15 +79,15 @@ Kernel module for FreeS/WAN.
 Modu³ j±dra wykorzystywany przez FreeS/WAN.
 
 %package -n kernel-smp-net-ipsec
-Summary:        SMP kernel module for Linux IPSEC
-Summary(pl):    Modu³ j±dra SMP dla IPSEC
-Release:        %{_rel}@%{_kernel_ver_str}
-Group:          Base/Kernel
+Summary:	SMP kernel module for Linux IPSEC
+Summary(pl):	Modu³ j±dra SMP dla IPSEC
+Release:	%{_rel}@%{_kernel_ver_str}
+Group:		Base/Kernel
 %{!?_without_dist_kernel:%requires_releq_kernel_up}
-PreReq:         modutils >= 2.4.6-4
-Requires(post,postun):  /sbin/depmod
-Requires:       %{name} = %{version}
-Conflicts:      kernel-smp <= 2.4.20-9
+PreReq:		modutils >= 2.4.6-4
+Requires(post,postun):	/sbin/depmod
+Requires:	%{name} = %{version}
+Conflicts:	kernel-smp <= 2.4.20-9
 
 %description -n kernel-smp-net-ipsec
 SMP kernel module for FreeS/WAN.
