@@ -7,7 +7,7 @@ Summary:	Free IPSEC implemetation
 Summary(pl):	Publicznie dostêpna implementacja IPSEC
 Name:		freeswan
 Version:	1.97
-Release:	0.2
+Release:	0.3
 License:	GPL
 Group:		Networking/Daemons
 Source0:	ftp://ftp.xs4all.nl/pub/crypto/%{name}/%{name}-%{version}.tar.gz
@@ -57,6 +57,7 @@ FreeS/WAN jest darmow± implementacj± protoko³u IPSEC.
 %{?!_without_x509:%patch5 -p1 }
 %build
 OPT_FLAGS="%{rpmcflags}"; export OPT_FLAGS
+CC=%{__cc}; export CC
 %{__make} programs
 
 %install
