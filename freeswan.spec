@@ -5,12 +5,13 @@ Version:	1.8
 Release:	1
 License:	GPL
 Group:		Networking/Daemons
+Group(de):	Netzwerkwesen/Server
 Group(pl):	Sieciowe/Serwery
 Source0:	ftp://ftp.xs4all.nl/pub/crypto/freeswan/%{name}-%{version}.tar.gz
-Patch0:		%{name}-Makefiles.patch	
-Patch1:		%{name}-manlink.patch	
-Patch2:		%{name}-config.patch	
-Patch3:		%{name}-init.patch	
+Patch0:		%{name}-Makefiles.patch
+Patch1:		%{name}-manlink.patch
+Patch2:		%{name}-config.patch
+Patch3:		%{name}-init.patch
 URL:		http://www.freeswan.org/
 Prereq:		/sbin/chkconfig
 Prereq:		rc-scripts
@@ -19,9 +20,9 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
 The basic idea of IPSEC is to provide security functions
-(authentication and encryption) at the IP (Internet Protocol)
-level. It will be required in IP version 6 (better known as IPng,
-the next generation) and is optional for the current IP, version 4.
+(authentication and encryption) at the IP (Internet Protocol) level.
+It will be required in IP version 6 (better known as IPng, the next
+generation) and is optional for the current IP, version 4.
 
 FreeS/WAN is a freely-distributable implementation of IPSEC protocol.
 
@@ -33,7 +34,7 @@ FreeS/WAN is a freely-distributable implementation of IPSEC protocol.
 %patch3 -p1
 
 %build
-OPT_FLAGS="$RPM_OPT_FLAGS"; export OPT_FLAGS
+OPT_FLAGS="%{rpmcflags}"; export OPT_FLAGS
 %{__make} programs
 
 %install
