@@ -96,7 +96,7 @@ SMP kernel module for FreeS/WAN.
 Modu³ j±dra SMP wykorzystywany przez FreeS/WAN.
 
 %prep
-%setup  -q -a2 -a3 -n %{name}-%{version}
+%setup -q -a2 -a3 
 %patch0 -p1
 %patch1 -p1
 %{?!_without_x509:patch -p1 -s <%{x509ver}-%{name}-%{version}/freeswan.diff}
