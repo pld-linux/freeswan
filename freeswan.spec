@@ -7,7 +7,7 @@ Summary:	Free IPSEC implemetation
 Summary(pl):	Publicznie dostêpna implementacja IPSEC
 Name:		freeswan
 Version:	2.00
-Release:	1
+Release:	2
 License:	GPL
 Group:		Networking/Daemons
 Source0:	ftp://ftp.xs4all.nl/pub/crypto/%{name}/development/%{name}-%{version}.tar.gz
@@ -19,11 +19,14 @@ Source2:	http://www.strongsec.com/%{name}/%{x509ver}-%{name}-%{version}.tar.gz
 Patch0:		%{name}-showhostkey.patch
 Patch1:		%{name}-init.patch
 Patch2:		%{name}-des.patch
+Patch3:		%{name}-paths.patch
+Patch4:		%{name}-confread.patch
 URL:		http://www.freeswan.org/
 BuildRequires:	gmp-devel
 Prereq:		/sbin/chkconfig
 Prereq:		rc-scripts
 Requires: 	gmp
+Requires:	gawk
 %{!?_without_dist_kernel:Requires:	kernel(freeswan) = %{version}}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -53,7 +56,8 @@ FreeS/WAN jest darmow± implementacj± protoko³u IPSEC.
 %patch1 -p1
 %{?!_without_x509:patch -p1 <%{x509ver}-%{name}-%{version}/freeswan.diff}
 %patch2 -p1
-
+%patch3 -p1
+%patch4 -p1
 %build
 
 USERCOMPILE="%{rpmcflags}" ; export USERCOMPILE
@@ -61,9 +65,11 @@ OPT_FLAGS="%{rpmcflags}"; export OPT_FLAGS
 CC=%{__cc}; export CC
 %{__make} programs \
 	FINALCONFDIR=%{_sysconfdir}/ipsec \
+	FINALCONFFILE=%{_sysconfdir}/ipsec/ipsec.conf \
 	INC_USRLOCAL=/usr \
 	INC_MANDIR=share/man \
 	FINALRCDIR=%{_sysconfdir}/rc.d/init.d \
+	BIND9STATICLIBDIR=%{_libdir} \
 	FINALLIBEXECDIR=%{_libdir}/ipsec 
 
 %install
@@ -75,8 +81,10 @@ install -d $RPM_BUILD_ROOT{%{_sysconfdir}/ipsec,/etc/rc.d/init.d,/var/run/pluto}
 	INC_USRLOCAL=/usr \
         INC_MANDIR=share/man \
         FINALCONFDIR=%{_sysconfdir}/ipsec \
+	FINALCONFFILE=%{_sysconfdir}/ipsec/ipsec.conf \
 	FINALRCDIR=%{_sysconfdir}/rc.d/init.d \
 	FINALLIBEXECDIR=%{_libdir}/ipsec \
+	BIND9STATICLIBDIR=%{_libdir} \
 	FINALEXAMPLECONFDIR=/usr/share/doc/%{name}-%{version}
 
 %if %{x509}
