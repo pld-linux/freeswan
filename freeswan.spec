@@ -2,18 +2,17 @@
 # _without_x509		- without x509 support
 # _without_dist_kernel	- without distribution kernel
 
-%define _rc		rc2
-%define x509ver		 x509-1.2.1
+%define x509ver		 x509-1.3.1
 Summary:	Free IPSEC implemetation
 Summary(pl):	Publicznie dostêpna implementacja IPSEC
 Name:		freeswan
 Version:	2.00
-Release:	0.%{_rc}.1
+Release:	1
 License:	GPL
 Group:		Networking/Daemons
-Source0:	ftp://ftp.xs4all.nl/pub/crypto/%{name}/development/%{name}-%{version}-%{_rc}.tar.gz
+Source0:	ftp://ftp.xs4all.nl/pub/crypto/%{name}/development/%{name}-%{version}.tar.gz
 Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-pl-man-pages.tar.bz2
-Source2:	http://www.strongsec.com/%{name}/%{x509ver}-%{name}-%{version}-%{_rc}.tar.gz
+Source2:	http://www.strongsec.com/%{name}/%{x509ver}-%{name}-%{version}.tar.gz
 Patch0:		%{name}-showhostkey.patch
 Patch1:		%{name}-init.patch
 Patch2:		%{name}-des.patch
@@ -22,8 +21,8 @@ BuildRequires:	gmp-devel
 Prereq:		/sbin/chkconfig
 Prereq:		rc-scripts
 Requires: 	gmp
-%{!?_without_dist_kernel:Requires:	kernel(freeswan) >= %{version}-%{_rc}}
-BuildRoot:	%{tmpdir}/%{name}-%{version}-%{_rc}-root-%(id -u -n)
+%{!?_without_dist_kernel:Requires:	kernel(freeswan) = %{version}}
+BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define x509 1
 %{?_without_x509:%define x509 0}
@@ -46,14 +45,10 @@ opcjonalny dla aktualnego IP, w wersji 4.
 FreeS/WAN jest darmow± implementacj± protoko³u IPSEC.
 
 %prep
-%setup  -q -a2 -n %{name}-%{version}-%{_rc}
-
+%setup  -q -a2 -n %{name}-%{version}
 %patch0 -p1
 %patch1 -p1
-
-%{?!_without_x509:patch -p1 <%{x509ver}-%{name}-%{version}-%{_rc}/freeswan.diff}
-#%{?!_without_x509:%patch5 -p1 }
-
+%{?!_without_x509:patch -p1 <%{x509ver}-%{name}-%{version}/freeswan.diff}
 %patch2 -p1
 
 %build
@@ -87,7 +82,7 @@ install -d $RPM_BUILD_ROOT{%{_sysconfdir}/ipsec,/etc/rc.d/init.d,/var/run/pluto}
   install -d  $RPM_BUILD_ROOT%{_sysconfdir}/ipsec/ipsec.d/$i
 done
 for i in CHANGES README; do
-  install  %{x509ver}-%{name}-%{version}-%{_rc}/$i $i.x509 ;	
+  install  %{x509ver}-%{name}-%{version}/$i $i.x509 ;	
 done
 %endif
 
