@@ -1,0 +1,11 @@
+--- freeswan-1.97/pluto/whack.h	Wed May  1 20:29:27 2002
++++ freeswan-1.97/pluto/whack.h.org	Wed May  1 20:30:26 2002
+@@ -205,7 +205,7 @@
+ /* options of whack --reread*** command */
+ 
+ #define REREAD_NONE	0x00	/* don't reread anything */
+-#define REREAD_SECRETS	0x01	/* reread /etc/ipsec.secrets */
++#define REREAD_SECRETS	0x01	/* reread /etc/ipsec/ipsec.secrets */
+ #define REREAD_MYCERT	0x02	/* reread /etc/x509cert.der (deprecated) */
+ #define REREAD_CACERTS	0x04	/* reread certs in /etc/ipsec.d/cacerts */
+ #define REREAD_CRLS	0x08	/* reread crls in /etc/ipsec.d/crls */
