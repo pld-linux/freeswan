@@ -13,13 +13,13 @@ Patch3:		%{name}-init.patch
 URL:		http://www.freeswan.org
 Prereq:		/sbin/chkconfig
 Requires:	rc-scripts
-BuildRequires:  gmp-devel
-BuildRoot:	/tmp/%{name}-%{version}-root
+BuildRequires:	gmp-devel
+BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
-The   basic   idea   of   IPSEC   is  to  provide  security  functions
-([60]authentication  and [61]encryption) at the IP (Internet Protocol)
-level.  It will be required in [62]IP version 6 (better known as IPng,
+The basic idea of IPSEC is to provide security functions
+([60]authentication and [61]encryption) at the IP (Internet Protocol)
+level. It will be required in [62]IP version 6 (better known as IPng,
 the next generation) and is optional for the current IP, version 4.
 
 FreeS/WAN is a freely-distributable implementation of IPSEC protocol/
@@ -39,8 +39,9 @@ make programs
 %install
 rm -rf $RPM_BUILD_ROOT
 
-install -d $RPM_BUILD_ROOT{/etc/{freeswan,rc.d/init.d},/var/run/pluto}
-make install DESTDIR="$RPM_BUILD_ROOT" 
+install -d $RPM_BUILD_ROOT{%{_sysconfdir}/freeswan,/etc/rc.d/init.d,/var/run/pluto}
+make install \
+	DESTDIR="$RPM_BUILD_ROOT" 
 
 gzip -9nf README CREDITS CHANGES BUGS \
           doc/{kernel.notes,impl.notes,examples,prob.report,standards} \
@@ -72,7 +73,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man*/*
 %attr(755,root,root) %{_sbindir}/*
 %attr(754,root,root) /etc/rc.d/init.d/*
-%dir /usr/lib/ipsec
-%attr(755,root,root) /usr/lib/ipsec/*
-%attr(751,root,root) %dir /etc/freeswan
-%attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/freeswan/*
+%dir %{_libdir}/ipsec
+%attr(755,root,root) %{_libdir}/ipsec/*
+%attr(751,root,root) %dir %{_sysconfdir}/freeswan
+%attr(640,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/freeswan/*
