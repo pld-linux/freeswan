@@ -1,6 +1,5 @@
-diff -Naur freeswan-1.96.orig/Makefile.inc freeswan-1.96/Makefile.inc
---- freeswan-1.96.orig/Makefile.inc	Mon Mar 18 09:32:50 2002
-+++ freeswan-1.96/Makefile.inc	Mon Mar 18 09:40:32 2002
+--- freeswan-1.97/Makefile.inc	Fri Apr 12 04:37:17 2002
++++ freeswan-1.97/Makefile.inc.org	Wed May  1 18:28:17 2002
 @@ -45,7 +45,7 @@
  DESTDIR=
  
@@ -25,7 +24,7 @@ diff -Naur freeswan-1.96.orig/Makefile.inc freeswan-1.96/Makefile.inc
  CONFDIR=$(DESTDIR)$(FINALCONFDIR)
  
  # An attempt is made to automatically figure out where boot/shutdown scripts 
-@@ -74,17 +74,14 @@
+@@ -74,17 +74,18 @@
  # If none of those exists (or INC_RCDIRS is empty), INC_RCDEFAULT gets them.
  # With a non-null DESTDIR, INC_RCDEFAULT will be used unless one of the
  # INC_RCDIRS directories has been pre-created under DESTDIR.
@@ -42,11 +41,15 @@ diff -Naur freeswan-1.96.orig/Makefile.inc freeswan-1.96/Makefile.inc
 -		do if test -d $(DESTDIR)/$$d ; \
 -		then echo $$d ; exit 0 ; \
 -		fi ; done ; echo $(INC_RCDEFAULT) )
++#FINALRCDIR=$(shell for d in $(INC_RCDIRS) ; \
++#		do if test -d $(DESTDIR)/$$d ; \
++#		then echo $$d ; exit 0 ; \
++#		fi ; done ; echo $(INC_RCDEFAULT) )
 +FINALRCDIR=/etc/rc.d/init.d
  RCDIR=$(DESTDIR)$(FINALRCDIR)
  
  
-@@ -125,8 +122,8 @@
+@@ -126,8 +127,8 @@
  
  # extra compile flags, for userland and kernel stuff, e.g. -g for debug info
  # (caution, this stuff is still being sorted out, will change in future)
@@ -55,5 +58,5 @@ diff -Naur freeswan-1.96.orig/Makefile.inc freeswan-1.96/Makefile.inc
 +USERCOMPILE=$(OPT_FLAGS)
 +KLIPSCOMPILE=$(OPT_FLAGS)
  
- # extra options for use in kernel build
- KERNMAKEOPTS=
+ # command used to link/copy KLIPS into kernel source tree
+ # There are good reasons why this is "ln -s"; only people like distribution
