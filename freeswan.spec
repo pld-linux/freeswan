@@ -1,6 +1,5 @@
 # Conditional builds
 # _without_x509
-# _with_klips
 # _with_smp
 # _with_oldconfig
 
@@ -10,7 +9,7 @@ Summary:	Free IPSEC implemetation
 Summary(pl):	Publicznie dostêpna implementacja IPSEC
 Name:		freeswan
 Version:	1.97
-Release:	0.5
+Release:	1
 License:	GPL
 Group:		Networking/Daemons
 Source0:	ftp://ftp.xs4all.nl/pub/crypto/%{name}/%{name}-%{version}.tar.gz
@@ -23,7 +22,6 @@ Patch2:		%{name}-config.patch
 Patch3:		%{name}-init.patch
 Patch4:		%{name}-keygen.patch
 Patch5:		x509-config.patch
-Patch6:		kernel-freeswan-bridge.patch
 URL:		http://www.freeswan.org/
 Prereq:		/sbin/chkconfig
 Prereq:		rc-scripts
@@ -34,8 +32,6 @@ BuildRequires:	kernel-doc
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 Requires: 	gmp
 
-%define klips 1
-%{?_without_klips:%define klips 0}
 %define x509 1
 %{?_without_x509:%define x509 0}
 
@@ -56,29 +52,8 @@ opcjonalny dla aktualnego IP, w wersji 4.
 
 FreeS/WAN jest darmow± implementacj± protoko³u IPSEC.
 
-%if %{klips}
-%package -n kernel-%{_kernel_ver}-ipsec
-Summary: FreeS/WAN IPSec kernel module
-Summary(pl): Modu³ IPSec do j±dra
-Group: System Environment/Kernel
-Requires: freeswan
-%endif
-
-%if %{klips}
-%description -n kernel-%{_kernel_ver}-ipsec
-FreeS/WAN IPSec Kernel Module (KLIPS)
-
-%description -l pl 
-Modu³ j±dra do IPSec
-%endif
-
-
 %prep
 %setup  -q -a2
-
-%if %{klips}
-cp -pR %{_kernelsrcdir}/ linux
-%endif
 
 %patch0 -p1
 %patch1 -p1
@@ -86,37 +61,15 @@ cp -pR %{_kernelsrcdir}/ linux
 %patch3 -p1
 %patch4 -p1
 
-%if %{klips}
-%patch6 -p1
-%endif
-
 %{?!_without_x509:patch -p1 <%{x509ver}-%{name}-%{version}/freeswan.diff}
 %{?!_without_x509:%patch5 -p1 }
 
 %build
 
-%if %{klips}
-
-cd linux
-#if [ -f .config ]; then
-#    cat %{SOURCE3} >> .config	
-#	
-#else
-#    echo "ERROR: There is no kernel configuration available."
-#    echo "Configure your kernel first and add --with oldconfig"
-#    echo "to rpmbuild command line when trying to build with"
-#    echo "klips module next time."
-#    exit 1
-#fi
-
-%{__make} -s include/linux/version.h
-cd ..
-%endif
-
 USERCOMPILE="%{rpmcflags}" ; export USERCOMPILE
 OPT_FLAGS="%{rpmcflags}"; export OPT_FLAGS
 CC=%{__cc}; export CC
-%{__make}   %{?!_without_klips:KERNELSRC=linux precheck insert ocf module}  programs
+%{__make} programs
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -135,11 +88,6 @@ for i in CHANGES README; do
 	gzip -9nf $i.x509 ;
 
 done
-%endif
-
-%if %{klips}
-install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc
-install linux/net/ipsec/ipsec.o $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc/ipsec.o
 %endif
 
 bzip2 -dc %{SOURCE1} | tar xf - -C $RPM_BUILD_ROOT%{_mandir}
@@ -174,12 +122,6 @@ if [ "$1" = "0" ]; then
         /sbin/chkconfig --del ipsec >&2
 fi
 
-%post   -n kernel-%{_kernel_ver}-ipsec
-/sbin/depmod -a
-
-%postun -n kernel-%{_kernel_ver}-ipsec
-/sbin/depmod -a
-
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -201,11 +143,4 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0700,root,root) %dir %{_sysconfdir}/ipsec.d/crls
 %attr(0700,root,root) %dir %{_sysconfdir}/ipsec.d/cacerts
 %attr(0700,root,root) %dir %{_sysconfdir}/ipsec.d/private
-%endif
-
-%if %{klips}
-%files -n kernel-%{_kernel_ver}-ipsec
-%defattr(644,root,root,755)
-%dir /lib/modules/%{_kernel_ver}/misc
-%attr(0600,root,root) /lib/modules/%{_kernel_ver}/misc/ipsec.o
 %endif
