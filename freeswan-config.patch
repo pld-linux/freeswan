@@ -1,6 +1,5 @@
-diff -Naur freeswan-1.96.orig/utils/_confread freeswan-1.96/utils/_confread
---- freeswan-1.96.orig/utils/_confread	Mon Mar 18 09:49:41 2002
-+++ freeswan-1.96/utils/_confread	Mon Mar 18 09:54:25 2002
+--- freeswan-1.97/utils/_confread	Tue Mar 26 18:49:42 2002
++++ freeswan-1.97/utils/_confread.org	Wed May  1 18:30:05 2002
 @@ -14,7 +14,7 @@
  #
  # RCSID $Id$
@@ -14,53 +13,35 @@ diff -Naur freeswan-1.96.orig/utils/_confread freeswan-1.96/utils/_confread
  #	exit 1
  # fi
  
--config=/etc/ipsec.conf
+-config=${IPSEC_CONFS-/etc}/ipsec.conf
 +config=/etc/ipsec/ipsec.conf
  include=yes
  type=conn
  fieldfmt=yes
-diff -Naur freeswan-1.96.orig/utils/auto freeswan-1.96/utils/auto
---- freeswan-1.96.orig/utils/auto	Mon Mar 18 09:49:41 2002
-+++ freeswan-1.96/utils/auto	Mon Mar 18 09:55:54 2002
+--- freeswan-1.97/utils/auto	Tue Mar 26 06:07:48 2002
++++ freeswan-1.97/utils/auto.org	Wed May  1 18:30:51 2002
 @@ -24,7 +24,7 @@
  	other options: [--config ipsecconfigfile] [--verbose] [--show]"
  
  showonly=
--config=/etc/ipsec.conf
+-config=
 +config=/etc/ipsec/ipsec.conf
  info=/var/run/ipsec.info
  shopts=
  noinclude=
-diff -Naur freeswan-1.96.orig/utils/barf freeswan-1.96/utils/barf
---- freeswan-1.96.orig/utils/barf	Mon Mar 18 09:49:41 2002
-+++ freeswan-1.96/utils/barf	Mon Mar 18 09:56:45 2002
-@@ -163,9 +163,9 @@
- _________________________ ipsec/showdefaults
- ipsec showdefaults
- _________________________ ipsec/conf
--ipsec _include /etc/ipsec.conf | ipsec _keycensor
-+ipsec _include /etc/ipsec/ipsec.conf | ipsec _keycensor
- _________________________ ipsec/secrets
--ipsec _include /etc/ipsec.secrets | ipsec _secretcensor
-+ipsec _include /etc/ipsec/ipsec.secrets | ipsec _secretcensor
- _________________________ ipsec/ls-dir
- ls -l ${IPSEC_DIR-/usr/local/lib/ipsec}
- _________________________ ipsec/updowns
-diff -Naur freeswan-1.96.orig/utils/manual freeswan-1.96/utils/manual
---- freeswan-1.96.orig/utils/manual	Mon Mar 18 09:49:41 2002
-+++ freeswan-1.96/utils/manual	Mon Mar 18 09:58:04 2002
-@@ -26,7 +26,7 @@
- unset LANG LANGUAGE LC_ALL LC_MESSAGES
+--- freeswan-1.97/utils/barf	Tue Mar 26 18:49:42 2002
++++ freeswan-1.97/utils/barf.org	Wed May  1 18:32:11 2002
+@@ -16,7 +16,7 @@
  
- showonly=
--config=/etc/ipsec.conf
-+config=/etc/ipsec/ipsec.conf
- info=/var/run/ipsec.info
- shopts=
- other=0
-diff -Naur freeswan-1.96.orig/utils/showhostkey freeswan-1.96/utils/showhostkey
---- freeswan-1.96.orig/utils/showhostkey	Mon Mar 18 09:49:41 2002
-+++ freeswan-1.96/utils/showhostkey	Mon Mar 18 09:58:55 2002
+ KERNSRC=${KERNSRC-/usr/src/linux}
+ LOGS=${LOGS-/var/log}
+-CONFS=${IPSEC_CONFS-/etc}
++CONFS=/etc/ipsec/ipsec.conf
+ me="ipsec barf"
+ 
+ # message patterns that start relevant parts of logs
+--- freeswan-1.97/utils/showhostkey	Fri Oct 26 18:17:02 2001
++++ freeswan-1.97/utils/showhostkey.org	Wed May  1 18:33:00 2002
 @@ -17,7 +17,7 @@
  me="ipsec showhostkey"
  usage="Usage: $me [--file secrets] [--left] [--right] [--txt gateway] [--id id]"
