@@ -13,7 +13,7 @@ Patch2:		%{name}-config.patch
 Patch3:		%{name}-init.patch	
 URL:		http://www.freeswan.org/
 Prereq:		/sbin/chkconfig
-Requires:	rc-scripts
+Prereq:		rc-scripts
 BuildRequires:	gmp-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
