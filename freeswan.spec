@@ -31,8 +31,8 @@ URL:		http://www.freeswan.org/
 BuildRequires:	gmp-devel
 Prereq:		/sbin/chkconfig
 Prereq:		rc-scripts
-Requires: 	gmp
 Requires:	gawk
+Requires: 	gmp
 %{!?_without_dist_kernel:Requires:	kernel(freeswan) = %{version}}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -84,8 +84,8 @@ neighbour,if_inet6,protocol,x25,ipx,dn,datalink}.h kernelsrc/include/net
 install /usr/src/linux/net/{Config.in,Makefile} kernelsrc/net
 install /usr/src/linux/net/ipv4/af_inet.c kernelsrc/net/ipv4
 install /usr/src/linux/scripts/{Configure,pathdown.sh} kernelsrc/scripts
-%build
 
+%build
 USERCOMPILE="%{rpmcflags}" ; export USERCOMPILE
 OPT_FLAGS="%{rpmcflags}"; export OPT_FLAGS
 CC=%{__cc}; export CC
@@ -109,23 +109,23 @@ rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_sysconfdir}/ipsec,/etc/rc.d/init.d,/var/run/pluto}
 
 %{__make} install \
-	DESTDIR="$RPM_BUILD_ROOT" \
-	INC_USRLOCAL=/usr \
-        INC_MANDIR=share/man \
+	BIND9STATICLIBDIR=%{_libdir} \
+	DESTDIR=$RPM_BUILD_ROOT \
         FINALCONFDIR=%{_sysconfdir}/ipsec \
 	FINALCONFFILE=%{_sysconfdir}/ipsec/ipsec.conf \
-	FINALRCDIR=%{_sysconfdir}/rc.d/init.d \
 	FINALLIBEXECDIR=%{_libdir}/ipsec \
-	BIND9STATICLIBDIR=%{_libdir} \
-	FINALEXAMPLECONFDIR=/usr/share/doc/%{name}-%{version}
+	FINALEXAMPLECONFDIR=/usr/share/doc/%{name}-%{version} \
+	FINALRCDIR=%{_sysconfdir}/rc.d/init.d \
+        INC_MANDIR=share/man \
+	INC_USRLOCAL=/usr
 
 %if %{x509}
  install -d  $RPM_BUILD_ROOT%{_sysconfdir}/ipsec/ipsec.d
  for i in crls cacerts private policies; do
-  install -d  $RPM_BUILD_ROOT%{_sysconfdir}/ipsec/ipsec.d/$i
+ 	install -d  $RPM_BUILD_ROOT%{_sysconfdir}/ipsec/ipsec.d/$i
 done
 for i in CHANGES README; do
-  install  %{x509ver}-%{name}-%{version}/$i $i.x509 ;	
+	install  %{x509ver}-%{name}-%{version}/$i $i.x509 ;	
 done
 %endif
 
