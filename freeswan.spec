@@ -23,7 +23,7 @@ Patch2:		%{name}-config.patch
 Patch3:		%{name}-init.patch
 Patch4:		%{name}-keygen.patch
 Patch5:		x509-config.patch
-Patch6:		kernel-ipsec-bridge.patch
+Patch6:		kernel-freeswan-bridge.patch
 #Patch6:		%{name}-kernel-module.patch
 #Patch7:		%{name}-make-module.patch
 URL:		http://www.freeswan.org/
