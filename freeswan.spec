@@ -1,8 +1,8 @@
 Summary:	Free IPSEC implemetation
-Summary:	Publicznie dostêpna implementacja IPSEC
+Summary(pl):	Publicznie dostêpna implementacja IPSEC
 Name:		freeswan
 Version:	1.8
-Release:	1
+Release:	2
 License:	GPL
 Group:		Networking/Daemons
 Group(de):	Netzwerkwesen/Server
@@ -27,6 +27,14 @@ generation) and is optional for the current IP, version 4.
 
 FreeS/WAN is a freely-distributable implementation of IPSEC protocol.
 
+%description -l pl
+Podstawowa idea IPSEC to zapewnienie funkcji bezpieczeñstwa
+(autentykacji i szyfrowania) na poziomie IP. Bêdzie wymagany do IP w
+wersji 6 (znanego tak¿e jako IPng, IP nastêpnej generacji) i jest
+opcjonalny dla aktualnego IP, w wersji 4.
+
+FreeS/WAN jest darmow± implementacj± protoko³u IPSEC.
+
 %prep
 %setup  -q
 %patch0 -p1
@@ -50,6 +58,9 @@ bzip2 -dc %{SOURCE1} | tar xf - -C $RPM_BUILD_ROOT%{_mandir}
 gzip -9nf README CREDITS CHANGES BUGS \
           doc/{kernel.notes,impl.notes,examples,prob.report,standards}
 
+%clean
+rm -rf $RPM_BUILD_ROOT
+
 %post
 /sbin/chkconfig --add ipsec 
 if [ -f /var/lock/subsys/ipsec ]; then
@@ -65,9 +76,6 @@ if [ "$1" = "0" ]; then
 	fi
         /sbin/chkconfig --del ipsec >&2
 fi
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
