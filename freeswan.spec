@@ -89,11 +89,6 @@ done
 
 bzip2 -dc %{SOURCE1} | tar xf - -C $RPM_BUILD_ROOT%{_mandir}
 
-gzip -9nf README CREDITS CHANGES BUGS \
-          doc/{kernel.notes,impl.notes,examples,prob.report,standards} 
-		
-
-
 %post
 # generate RSA private key... if, and only if, /etc/ipsec/ipsec.secrets does
 # not already exist
@@ -125,7 +120,8 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc *.gz doc/*.gz doc/*.html
+%doc README CREDITS CHANGES BUGS \
+          doc/{kernel.notes,impl.notes,examples,prob.report,standards} doc/*.html
 %{?!_without_x509:%doc CHANGES.x509.gz README.x509.gz}
 %{_mandir}/man*/*
 %lang(pl) %{_mandir}/pl/man*/*
