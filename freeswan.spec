@@ -2,15 +2,29 @@ Summary:	Free IPSEC implemetation
 Summary(pl):	Publicznie dostêpna implementacja IPSEC
 Name:		freeswan
 Version:	1.95
-Release:	4
+Release:	5
 License:	GPL
 Group:		Networking/Daemons
+Group(cs):	Sí»ové/Démoni
+Group(da):	Netværks/Dæmoner
+Group(de):	Netzwerkwesen/Server
+Group(es):	Red/Servidores
+Group(fr):	Réseau/Serveurs
+Group(is):	Net/Púkar
+Group(it):	Rete/Demoni
+Group(no):	Nettverks/Daemoner
+Group(pl):	Sieciowe/Serwery
+Group(pt):	Rede/Servidores
+Group(ru):	óÅÔÅ×ÙÅ/äÅÍÏÎÙ
+Group(sl):	Omre¾ni/Stre¾niki
+Group(sv):	Nätverk/Demoner
 Source0:	ftp://ftp.xs4all.nl/pub/crypto/freeswan/%{name}-%{version}.tar.gz
 Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-pl-man-pages.tar.bz2
 Patch0:		%{name}-Makefiles.patch
 Patch1:		%{name}-manlink.patch
 Patch2:		%{name}-config.patch
 Patch3:		%{name}-init.patch
+Patch4:		%{name}-keygen.patch
 URL:		http://www.freeswan.org/
 Prereq:		/sbin/chkconfig
 Prereq:		rc-scripts
@@ -39,6 +53,7 @@ FreeS/WAN jest darmow± implementacj± protoko³u IPSEC.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 %build
 OPT_FLAGS="%{rpmcflags}"; export OPT_FLAGS
@@ -46,10 +61,10 @@ OPT_FLAGS="%{rpmcflags}"; export OPT_FLAGS
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_sysconfdir}/freeswan,/etc/rc.d/init.d,/var/run/pluto}
+install -d $RPM_BUILD_ROOT{%{_sysconfdir}/ipsec,/etc/rc.d/init.d,/var/run/pluto}
 
 %{__make} install \
-	DESTDIR="$RPM_BUILD_ROOT"
+	DESTDIR="$RPM_BUILD_ROOT" 
 
 bzip2 -dc %{SOURCE1} | tar xf - -C $RPM_BUILD_ROOT%{_mandir}
 
@@ -60,13 +75,22 @@ gzip -9nf README CREDITS CHANGES BUGS \
 rm -rf $RPM_BUILD_ROOT
 
 %post
-/sbin/chkconfig --add ipsec
+# generate RSA private key... if, and only if, /etc/ipsec/ipsec.secrets does
+# not already exist
+if [ ! -f %{_sysconfdir}/ipsec/ipsec.secrets ];
+then
+    echo generate RSA private key...
+    /usr/sbin/ipsec newhostkey > %{_sysconfdir}/ipsec/ipsec.secrets
+    chmod 600 %{_sysconfdir}/ipsec/ipsec.secrets
+fi
+
+/sbin/chkconfig --add ipsec 
 if [ -f /var/lock/subsys/ipsec ]; then
 	/etc/rc.d/init.d/ipsec restart >&2
 else
 	echo "Run '/etc/rc.d/init.d/ipsec start' to start IPSEC services." >&2
 fi
-
+    
 %preun
 if [ "$1" = "0" ]; then
 	if [ -f /var/lock/subsys/ipsec ]; then
