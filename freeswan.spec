@@ -48,10 +48,20 @@ gzip -9nf README CREDITS CHANGES BUGS \
           doc/{kernel.notes,impl.notes,examples,prob.report,standards}
 
 %post
-NAME=ipsec; DESC="IPSEC services"; %chkconfig_add
+/sbin/chkconfig --add ipsec 
+if [ -f /var/lock/subsys/ipsec ]; then
+	/etc/rc.d/init.d/ipsec restart >&2
+else
+	echo "Run '/etc/rc.d/init.d/ipsec start' to start IPSEC services." >&2
+fi
     
 %preun
-NAME=ipsec; %chkconfig_del
+if [ "$1" = "0" ]; then
+	if [ -f /var/lock/subsys/ipsec ]; then
+		/etc/rc.d/init.d/ipsec stop >&2
+	fi
+        /sbin/chkconfig --del ipsec >&2
+fi
 
 %clean
 rm -rf $RPM_BUILD_ROOT
