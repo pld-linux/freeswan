@@ -10,7 +10,7 @@ Summary:	Free IPSEC implemetation
 Summary(pl):	Publicznie dostêpna implementacja IPSEC
 Name:		freeswan
 Version:	1.97
-Release:	0.4
+Release:	0.5
 License:	GPL
 Group:		Networking/Daemons
 Source0:	ftp://ftp.xs4all.nl/pub/crypto/%{name}/%{name}-%{version}.tar.gz
@@ -24,8 +24,6 @@ Patch3:		%{name}-init.patch
 Patch4:		%{name}-keygen.patch
 Patch5:		x509-config.patch
 Patch6:		kernel-freeswan-bridge.patch
-#Patch6:		%{name}-kernel-module.patch
-#Patch7:		%{name}-make-module.patch
 URL:		http://www.freeswan.org/
 Prereq:		/sbin/chkconfig
 Prereq:		rc-scripts
@@ -90,31 +88,27 @@ cp -pR %{_kernelsrcdir}/ linux
 
 %if %{klips}
 %patch6 -p1
-#%patch7 -p1
 %endif
 
 %{?!_without_x509:patch -p1 <%{x509ver}-%{name}-%{version}/freeswan.diff}
 %{?!_without_x509:%patch5 -p1 }
-
-
 
 %build
 
 %if %{klips}
 
 cd linux
-if [ -f .config ]; then
-    cat %{SOURCE3} >> .config	
-	
-else
-    echo "ERROR: There is no kernel configuration available."
-    echo "Configure your kernel first and add --with oldconfig"
-    echo "to rpmbuild command line when trying to build with"
-    echo "klips module next time."
-    exit 1
+#if [ -f .config ]; then
+#    cat %{SOURCE3} >> .config	
+#	
+#else
+#    echo "ERROR: There is no kernel configuration available."
+#    echo "Configure your kernel first and add --with oldconfig"
+#    echo "to rpmbuild command line when trying to build with"
+#    echo "klips module next time."
+#    exit 1
+#fi
 
-#  make oldconfig_nonint 1>/dev/null 2>&1
-fi
 %{__make} -s include/linux/version.h
 cd ..
 %endif
@@ -154,8 +148,6 @@ gzip -9nf README CREDITS CHANGES BUGS \
           doc/{kernel.notes,impl.notes,examples,prob.report,standards} 
 		
 
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %post
 # generate RSA private key... if, and only if, /etc/ipsec/ipsec.secrets does
@@ -182,6 +174,16 @@ if [ "$1" = "0" ]; then
         /sbin/chkconfig --del ipsec >&2
 fi
 
+%post   -n kernel-%{_kernel_ver}-ipsec
+/sbin/depmod -a
+
+%postun -n kernel-%{_kernel_ver}-ipsec
+/sbin/depmod -a
+
+%clean
+rm -rf $RPM_BUILD_ROOT
+
+
 %files
 %defattr(644,root,root,755)
 %doc *.gz doc/*.gz doc/*.html
@@ -202,7 +204,8 @@ fi
 %endif
 
 %if %{klips}
-%files -n kernel%{?_with_smp:-smp}-%{_kernel_ver}%{?kext:-%{kext}}-ipsec
+%files -n kernel-%{_kernel_ver}-ipsec
 %defattr(644,root,root,755)
-/lib/modules/%{kverrel}/kernel/net/ipsec
+%dir /lib/modules/%{_kernel_ver}/misc
+%attr(0600,root,root) /lib/modules/%{_kernel_ver}/misc/ipsec.o
 %endif
