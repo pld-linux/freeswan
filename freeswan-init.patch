@@ -71,7 +71,7 @@
 +	                   {
 +	                       ipsec _realsetup $1 ;
 +	                       RETVAL=$?;
-+	                   } 2>&1 | logger -p $IPSECsyslog -t ipsec_setup 2>&1
++	                   } | logger -p $IPSECsyslog -t ipsec_setup 2>&1
 +	
 +	                   if [ "$RETVAL" -eq 0 ];
 +	                   then
