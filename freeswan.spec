@@ -16,6 +16,7 @@ Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-pl-man-pages.t
 Source2:	http://www.strongsec.com/%{name}/%{x509ver}-%{name}-%{version}-%{_rc}.tar.gz
 Patch0:		%{name}-showhostkey.patch
 Patch1:		%{name}-init.patch
+Patch2:		%{name}-des.patch
 URL:		http://www.freeswan.org/
 %{!?_without_dist_kernel:BuildRequires:	kernel-headers(freeswan)}
 BuildRequires:	gmp-devel
@@ -53,6 +54,8 @@ FreeS/WAN jest darmow± implementacj± protoko³u IPSEC.
 
 %{?!_without_x509:patch -p1 <%{x509ver}-%{name}-%{version}-%{_rc}/freeswan.diff}
 #%{?!_without_x509:%patch5 -p1 }
+
+%patch2 -p1
 
 %build
 
