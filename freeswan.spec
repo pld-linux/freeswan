@@ -4,13 +4,13 @@
 # _with_smp
 # _with_oldconfig
 
-%define x509ver		 x509patch-0.9.11
+%define x509ver		 x509-1.0.2
 
 Summary:	Free IPSEC implemetation
 Summary(pl):	Publicznie dostêpna implementacja IPSEC
 Name:		freeswan
-Version:	1.97
-Release:	0.5
+Version:	2.00pre2
+Release:	0.1
 License:	GPL
 Group:		Networking/Daemons
 Source0:	ftp://ftp.xs4all.nl/pub/crypto/%{name}/%{name}-%{version}.tar.gz
@@ -23,7 +23,7 @@ Patch2:		%{name}-config.patch
 Patch3:		%{name}-init.patch
 Patch4:		%{name}-keygen.patch
 Patch5:		x509-config.patch
-Patch6:		kernel-freeswan-bridge.patch
+#Patch6:	kernel-freeswan-bridge.patch
 URL:		http://www.freeswan.org/
 Prereq:		/sbin/chkconfig
 Prereq:		rc-scripts
@@ -86,9 +86,9 @@ cp -pR %{_kernelsrcdir}/ linux
 %patch3 -p1
 %patch4 -p1
 
-%if %{klips}
-%patch6 -p1
-%endif
+#%if %{klips}
+#%patch6 -p1
+#%endif
 
 %{?!_without_x509:patch -p1 <%{x509ver}-%{name}-%{version}/freeswan.diff}
 %{?!_without_x509:%patch5 -p1 }
