@@ -1,25 +1,32 @@
 # Conditional builds
 # _without_x509		- without x509 support
 # _without_dist_kernel	- without distribution kernel
-
-%define x509ver		 x509-1.3.5
+# _without_NAT		- without NAT-Traversal
+# _without_2.5.x	- without FreeS/WAN's keying daemon to work with 
+#			  the 2.5 kernel IPsec implementation
+%define x509ver		x509-1.3.6
+%define nat_tr_ver	0.6
+%define _25x_ver	20030705
 Summary:	Free IPSEC implemetation
 Summary(pl):	Publicznie dostêpna implementacja IPSEC
 Name:		freeswan
-Version:	2.00
-Release:	2
+Version:	2.01
+Release:	0.1
 License:	GPL
 Group:		Networking/Daemons
-Source0:	ftp://ftp.xs4all.nl/pub/crypto/%{name}/development/%{name}-%{version}.tar.gz
-# Source0-md5:	9bf0c0f9aaf79b93cced4f3ab545129c
+Source0:	ftp://ftp.xs4all.nl/pub/crypto/%{name}/%{name}-%{version}.tar.gz
+# Source0-md5:	0a5bdc7b93879c77de295fd75d704b4a
 Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-pl-man-pages.tar.bz2
 # Source1-md5:	6bd0b509015a2795cfb895aaab0bbc55
-Source2:	http://www.strongsec.com/%{name}/%{x509ver}-%{name}-%{version}.tar.gz
-# Source2-md5:	7efe6fd8615ad48e143b1b65f7b1c343
+# #Ssource2:	http://www.strongsec.com/%{name}/%{x509ver}-%{name}-%{version}.tar.gz
+# Ssource2-md5:	7efe6fd8615ad48e143b1b65f7b1c343
+Source3:	http://open-source.arkoon.net/freeswan/NAT-Traversal-%{nat_tr_ver}.tar.gz
+# Source3-md5:	6858a8535aa2611769d17e86e6735db2
 Patch0:		%{name}-showhostkey.patch
 Patch1:		%{name}-init.patch
 Patch2:		%{name}-paths.patch
 Patch3:		%{name}-confread.patch
+Patch4:		http://gondor.apana.org.au/~herbert/freeswan/2.00/freeswan-linux-ipsec-%{_25x_ver}.patch.gz
 URL:		http://www.freeswan.org/
 BuildRequires:	gmp-devel
 Prereq:		/sbin/chkconfig
@@ -56,6 +63,8 @@ FreeS/WAN jest darmow± implementacj± protoko³u IPSEC.
 %{?!_without_x509:patch -p1 <%{x509ver}-%{name}-%{version}/freeswan.diff}
 %patch2 -p1
 %patch3 -p1
+%{?!_without_nat-traversal:patch -p1 <NAT-Traversal-%{nat_tr_ver}/} 
+%{?!_without_2.5.x}:%patch4 -p1 freeswan-linux-ipsec-%{_25x_ver}.patch.gz}
 %build
 
 USERCOMPILE="%{rpmcflags}" ; export USERCOMPILE
