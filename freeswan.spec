@@ -1,8 +1,8 @@
 Summary:	Free IPSEC implemetation
 Summary(pl):	Publicznie dostêpna implementacja IPSEC
 Name:		freeswan
-Version:	1.95
-Release:	5
+Version:	1.96
+Release:	6
 License:	GPL
 Group:		Networking/Daemons
 Group(cs):	Sí»ové/Démoni
@@ -20,7 +20,7 @@ Group(sl):	Omre¾ni/Stre¾niki
 Group(sv):	Nätverk/Demoner
 Source0:	ftp://ftp.xs4all.nl/pub/crypto/freeswan/%{name}-%{version}.tar.gz
 Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-pl-man-pages.tar.bz2
-Patch0:		%{name}-Makefiles.patch
+Patch0:		%{name}-Makefile.patch
 Patch1:		%{name}-manlink.patch
 Patch2:		%{name}-config.patch
 Patch3:		%{name}-init.patch
