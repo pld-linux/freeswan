@@ -1,0 +1,11 @@
+--- freeswan-2.00/programs/_confread/_confread.in.fix	2003-06-09 03:28:28.000000000 +0200
++++ freeswan-2.00/programs/_confread/_confread.in	2003-06-09 03:28:45.000000000 +0200
+@@ -81,7 +81,7 @@
+ else
+ 	cat $config
+ fi |
+-awk 'BEGIN {
++gawk 'BEGIN {
+ 	type = "'"$type"'"
+ 	names = "'"$*"'"
+ 	prefix = "'"$prefix"'"
