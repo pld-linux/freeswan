@@ -6,6 +6,6 @@
  
 -file=/etc/ipsec.secrets
 +file=/etc/ipsec/ipsec.secrets
- fmt="dns"
+ fmt=""
  gw=
  id=
