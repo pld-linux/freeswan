@@ -87,18 +87,19 @@ Modu³ j±dra wykorzystywany przez FreeS/WAN
 %{?!_without_25x:%patch4 -p1}
 
 %build
+%define _kver `echo "%{_kernel_ver}" |awk -F. '{print $2}'`
 %if 0%{!?_without_modules:1}
   install -d kernelsrc
   lndir -silent /usr/src/linux kernelsrc
   mv kernelsrc/.config kernelsrc/.config.old
   cp kernelsrc/.config.old kernelsrc/.config
-    %if 0%{!?_without_dist_kernel:1}
+  %if 0%{!?_without_dist_kernel:1}
     rm -rf kernelsrc/include/asm
     cd kernelsrc
-    patch -R -p1 <../linux/net/Makefile.fs2_4.patch
-    patch -R -p1 <../linux/net/Config.in.fs2_4.patch
-    patch -R -p1 <../linux/net/ipv4/af_inet.c.fs2_4.patch
-    patch -R -p1 <../linux/Documentation/Configure.help.fs2_4.patch
+    patch -R -p1 <../linux/net/Makefile.fs2_%{_kver}.patch
+    patch -R -p1 <../linux/net/Config.in.fs2_%{_kver}.patch
+    patch -R -p1 <../linux/net/ipv4/af_inet.c.fs2_%{_kver}.patch
+    patch -R -p1 <../linux/Documentation/Configure.help.fs2_%{_kver}.patch
     cd ..
     rm -rf kernelsrc/{crypto,include/{freeswan,zlib,crypto},lib/{zlib,libfreeswan},net/ipsec}
     rm kernelsrc/include/{freeswan,pfkey,pfkeyv2}.h
