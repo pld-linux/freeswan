@@ -1,13 +1,13 @@
 # Conditional builds
 # _without_x509		- without x509 support
 # _without_dist_kernel	- without sources of distribution kernel
-# _without_NAT		- without NAT-Traversal
-# _without_25x	- without FreeS/WAN's keying daemon to work with 
+# _with_NAT		- without NAT-Traversal
+# _with_25x		- without FreeS/WAN's keying daemon to work with 
 #			  the 2.5 kernel IPsec implementation
 # _without_modules      - build only library+programs, no kernel modules
 %define x509ver		x509-1.4.1
 %define nat_tr_ver	0.6
-%define _25x_ver	20030713
+%define _25x_ver	20030720
 Summary:	Free IPSEC implemetation
 Summary(pl):	Publicznie dostêpna implementacja IPSEC
 Name:		freeswan
@@ -25,7 +25,7 @@ Source2:	http://www.strongsec.com/%{name}/%{x509ver}-%{name}-%{version}.tar.gz
 Source3:	http://open-source.arkoon.net/freeswan/NAT-Traversal-%{nat_tr_ver}.tar.gz
 # Source3-md5:	6858a8535aa2611769d17e86e6735db2
 Source4:	http://gondor.apana.org.au/~herbert/freeswan/%{version}/freeswan-%{version}-linux-ipsec-%{_25x_ver}.patch.gz
-# Source4-md5:	bffd7e46ca167de041e75641b0b1e9ef
+# Source4-md5:	3e3fe930d050bc0b2cfe4c9b1efaf9b8
 Patch0:		%{name}-showhostkey.patch
 Patch1:		%{name}-init.patch
 Patch2:		%{name}-paths.patch
@@ -104,8 +104,8 @@ Modu³ j±dra SMP wykorzystywany przez FreeS/WAN
 %{?!_without_x509:patch -p1 -s <%{x509ver}-%{name}-%{version}/freeswan.diff}
 #%patch2 -p1
 %patch3 -p1
-%{?!_without_NAT:patch -p1 -s <NAT-Traversal-%{nat_tr_ver}/NAT-Traversal-%{nat_tr_ver}-freeswan-2.00-x509-1.3.5.diff} 
-%{?!_without_25x:gzip -d <%{SOURCE4}| patch -p1 -s}
+%{?_with_NAT:patch -p1 -s <NAT-Traversal-%{nat_tr_ver}/NAT-Traversal-%{nat_tr_ver}-freeswan-2.00-x509-1.3.5.diff} 
+%{?_with_25x:gzip -d <%{SOURCE4}| patch -p1 -s}
 
 
 %build
@@ -291,7 +291,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc README CREDITS CHANGES BUGS 
 %doc doc/{kernel.notes,impl.notes,examples,prob.report,standards} doc/*.html
-%{?!_without_NAT:%doc NAT-Traversal-%{nat_tr_ver}/README.NAT-Traversal}
+%{?_with_NAT:%doc NAT-Traversal-%{nat_tr_ver}/README.NAT-Traversal}
 %{?!_without_x509:%doc CHANGES.x509 README.x509}
 %{_mandir}/man*/*
 %lang(pl) %{_mandir}/pl/man*/*
