@@ -80,16 +80,30 @@ Modu³ j±dra wykorzystywany przez FreeS/WAN
 %setup  -q -a2 -a3 -n %{name}-%{version}
 %patch0 -p1
 %patch1 -p1
-%{?!_without_x509:patch -p1 <%{x509ver}-%{name}-2.00/freeswan.diff}
+%{?!_without_x509:patch -p1 -s <%{x509ver}-%{name}-2.00/freeswan.diff}
 #%patch2 -p1
 %patch3 -p1
-%{?!_without_NAT:patch -p1 <NAT-Traversal-0.6/NAT-Traversal-0.6-freeswan-2.00-x509-1.3.5.diff} 
+%{?!_without_NAT:patch -p1 -s <NAT-Traversal-0.6/NAT-Traversal-0.6-freeswan-2.00-x509-1.3.5.diff} 
 %{?!_without_25x:%patch4 -p1}
 
 %build
 install -d kernelsrc
-lndir /usr/src/linux kernelsrc
+lndir -silent /usr/src/linux kernelsrc
 rm -rf kernelsrc/include/asm
+mv kernelsrc/.config kernelsrc/.config.old
+cp kernelsrc/.config.old kernelsrc/.config
+#rm -rf kernelsrc/{crypto,include/{freeswan,zlib},net/ipsec,lib/zlib}
+#rm kernelsrc/{include/{freeswan,pfkey,pfkeyv2}.h,net/ipv4/af_inet.c}
+echo "CONFIG_IPSEC=m" >> kernelsrc/.config
+echo "CONFIG_IPSEC_IPIP=y" >> kernelsrc/.config
+echo "CONFIG_IPSEC_AH=y" >> kernelsrc/.config
+echo "CONFIG_IPSEC_AUTH_HMAC_MD5=y" >> kernelsrc/.config
+echo "CONFIG_IPSEC_AUTH_HMAC_SHA1=y" >> kernelsrc/.config
+echo "CONFIG_IPSEC_ESP=y" >> kernelsrc/.config
+echo "CONFIG_IPSEC_ENC_3DES=y" >> kernelsrc/.config
+echo "CONFIG_IPSEC_IPCOMP=y" >> kernelsrc/.config
+echo "CONFIG_IPSEC_DEBUG=y" >> kernelsrc/.config
+
 
 USERCOMPILE="%{rpmcflags}" ; export USERCOMPILE
 OPT_FLAGS="%{rpmcflags}"; export OPT_FLAGS
@@ -177,6 +191,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc README CREDITS CHANGES BUGS 
 %doc doc/{kernel.notes,impl.notes,examples,prob.report,standards} doc/*.html
+%{?!_without_NAT:%doc NAT-Traversal-%{nat_tr_ver}/README.NAT-Traversal}
 %{?!_without_x509:%doc CHANGES.x509 README.x509}
 %{_mandir}/man*/*
 %lang(pl) %{_mandir}/pl/man*/*
