@@ -111,7 +111,7 @@ Modu³ j±dra SMP wykorzystywany przez FreeS/WAN
 %if 0%{!?_without_modules:1}
   install -d kernelsrc
   lndir -silent /usr/src/linux kernelsrc
-  mv kernelsrc/.config kernelsrc/.config.old
+  cp kernelsrc/.config kernelsrc/.config.old
   %if 0%{!?_without_dist_kernel:1}
     rm -rf kernelsrc/include/asm
     cd kernelsrc
@@ -157,7 +157,7 @@ CC=%{__cc}; export CC
     rm -rf kernelsrc
     install -d kernelsrc
     lndir -silent /usr/src/linux kernelsrc
-    mv kernelsrc/.config kernelsrc/.config.old
+    cp kernelsrc/.config kernelsrc/.config.old
     %if 0%{!?_without_dist_kernel:1}
       rm -rf kernelsrc/include/asm
       cd kernelsrc
