@@ -1,0 +1,70 @@
+--- freeswan-1.97/Makefile.module	Fri May  3 13:06:04 2002
++++ freeswan-1.97/Makefile.module.org	Fri May  3 12:51:46 2002
+@@ -0,0 +1,27 @@
++# Makefile for the ipsec (FreeS/WAN) module.
++# (c) Kloc Piotr <pioklo@pld.org.pl> ,2002-05-03, GNU GPL
++
++KDIR=linux
++TOPDIR=$(KDIR)
++
++default: module
++all: module
++modules: module
++
++module:
++	       $(MAKE) -f Makefile kmodule
++
++install: install_mod
++
++install_mod:
++	       ( cd $(KDIR)/net/ipsec; \
++	         ln -sf ../../arch .; ln -sf ../../Rules.make .; cd ../..; \
++	         $(MAKE) -C net/ipsec -f Makefile.ipsec ipsecmod_inst )
++	         rm $(KDIR)/net/ipsec/arch $(KDIR)/net/ipsec/Rules.make
++	       $(MAKE) -f Makefile unpatch
++	       ( cd $(KDIR); rm -rf net/ipsec; yes "" | $(MAKE) oldconfig )
++
++clean:
++	       $(MAKE) -f Makefile unpatch
++	       rm -rf $(KDIR)/net/ipsec
++	       (cd $(KDIR); yes "" | $(MAKE) oldconfig)
++
+--- freeswan-1.97/Makefile.ipsec	Fri May  3 13:14:54 2002
++++ freeswan-1.97/Makefile.ipsec.org	Fri May  3 13:14:43 2002
+@@ -0,0 +1,36 @@
++# Makefile for the ipsec (FreeS/WAN) driver
++# (w) 5/2002, pioklo@pld.org.pl
++
++KDIR := linux
++TOPDIR := $(KDIR)
++
++TARGET = ipsec.o
++
++default: $(TARGET)
++
++TOPDIR := $(KDIR)
++include $(KDIR)/.config
++include $(KDIR)/Makefile
++TOPDIR := $(KDIR)
++
++CFLAGS := -I$(KDIR)/include $(CFLAGS) -DMODULE
++ifdef CONFIG_MODVERSIONS
++CFLAGS += -DMODVERSIONS -include $(KDIR)/include/linux/modversions.h
++endif
++
++include Makefile
++
++ifndef MODLIB
++MODLIB = $(INSTALL_MOD_PATH)/lib/modules/$(KERNELRELEASE)
++endif
++
++ifeq ($(PATCHLEVEL),2)
++MODSUB := misc
++else
++MODSUB := kernel/misc
++endif
++
++ipsecmod_inst:
++	       install -o root -g root -m 0755 -d $(MODLIB)/$(MODSUB)
++	       install -o root -g root -m 0644 ipsec.o $(MODLIB)/$(MODSUB)/
++

@@ -1,0 +1,83 @@
+--- freeswan-1.97/Makefile	Fri Apr 12 06:08:31 2002
++++ freeswan-1.97/Makefile.org	Fri May  3 12:42:39 2002
+@@ -50,7 +50,8 @@
+ 	@false
+ 
+ # everything that's necessary to put Klips into the kernel
+-insert:	patches klink klipsdefaults
++.NOTPARALLEL:  myprecheck patches klink klipsdefaults
++insert:        myprecheck patches klink klipsdefaults
+ 
+ # create KERNELKLIPS and populate it with symlinks to the sources
+ klink:
+@@ -214,6 +215,8 @@
+ POST=confcheck programs install kernel
+ MPOST=confcheck programs install module
+ RPOST=confcheck programs rpminstall module rpmkinstall rpms
++KMPOST=confcheck programs install kmodule
++
+ ogo:	$(PRE) pcf $(POST)
+ oldgo:	$(PRE) ocf $(POST)
+ menugo:	$(PRE) mcf $(POST)
+@@ -227,6 +230,7 @@
+ oldrpm:	$(PRE) ocf $(RPOST) 
+ menurpm:	$(PRE) mcf $(RPOST) 
+ xrpm:	$(PRE) xcf $(RPOST) 
++modgo:  $(PRE) ncf $(KMPOST)
+ 
+ # preliminaries
+ precheck:
+@@ -256,6 +260,11 @@
+ 		echo '*** please do that first; the results are necessary.' ; \
+ 		exit 1 ; \
+ 	fi
++myprecheck: myocf
++
++myocf: precheck
++	   -cd $(KERNELSRC) ; yes "" | $(MAKE) oldconfig; $(MAKE) include/linux/version.h
++
+ 
+ # set version code if this is a fresh CVS checkout
+ verset: 
+@@ -279,6 +288,16 @@
+ ocf:
+ 	-cd $(KERNELSRC) ; $(MAKE) $(KERNMAKEOPTS) oldconfig dep </dev/null >/dev/null
+ 
++
++ENTER := "M\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
++ncf: insert
++	       -cd $(KERNELSRC); echo -e $(ENTER) | $(MAKE) oldconfig
++
++ncf_k: ncf
++	       -cd $(KERNELSRC); $(MAKE) dep kernel
++
++confcheck: ncf
++
+ rpm:
+ 	mkdir -p ${RPMKERNDIR}
+ 	rm -rf $(RPMTMPDIR)
+@@ -329,6 +348,24 @@
+ 	then set -x ; \
+ 		( cd $(KERNELSRC) ; \
+ 		$(MAKE) $(KERNMAKEOPTS) modules 2>&1 ) | tee -a out.kbuild ; \
++	
++	       fi
++	       utils/errcheck out.kbuild
++	
++	# kernel building, with error checks
++	kmodule: confcheck
++	       rm -f out.kbuild out.kinstall
++	       cp -pf Makefile.ipsec $(KERNELSRC)/net/ipsec/
++	       #( cd $(KERNELSRC) ; $(MAKE) dep kernel) 2>&1 | tee out.kbuild
++	       @if egrep -q '^CONFIG_MODULES=y' $(KCFILE) ; \
++	       then set -x ; \
++	               ( cd $(KERNELSRC)/net/ipsec ; \
++	               ln -sf ../../arch .; ln -sf ../../Rules.make .; cd ../..; \
++	               $(MAKE) -C net/ipsec -f Makefile.ipsec 2>&1 ) | tee -a out.kbuild ; \
++	               rm $(KERNELSRC)/net/ipsec/arch $(KERNELSRC)/net/ipsec/Rules.make; \
++	       else \
++	               echo "BUG: You have to enable modules!"; \
++	               exit 1; \
+ 	fi
+ 	utils/errcheck out.kbuild
+ 
