@@ -8,6 +8,7 @@ Group:		Networking/Daemons
 Group(de):	Netzwerkwesen/Server
 Group(pl):	Sieciowe/Serwery
 Source0:	ftp://ftp.xs4all.nl/pub/crypto/freeswan/%{name}-%{version}.tar.gz
+Source1:	%{name}-pl-man-pages.tar.bz2
 Patch0:		%{name}-Makefiles.patch
 Patch1:		%{name}-manlink.patch
 Patch2:		%{name}-config.patch
@@ -44,6 +45,8 @@ install -d $RPM_BUILD_ROOT{%{_sysconfdir}/freeswan,/etc/rc.d/init.d,/var/run/plu
 %{__make} install \
 	DESTDIR="$RPM_BUILD_ROOT" 
 
+bzip2 -dc %{SOURCE1} | tar xf - -C $RPM_BUILD_ROOT%{_mandir}
+
 gzip -9nf README CREDITS CHANGES BUGS \
           doc/{kernel.notes,impl.notes,examples,prob.report,standards}
 
@@ -70,6 +73,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc *.gz doc/*.gz doc/*.html
 %{_mandir}/man*/*
+%lang(pl) %{_mandir}/pl/man*/*
 %attr(755,root,root) %{_sbindir}/*
 %attr(754,root,root) /etc/rc.d/init.d/*
 %dir %{_libdir}/ipsec
