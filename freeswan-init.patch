@@ -133,6 +133,7 @@
 +               msg_not_running ipsec
 +               exit 1
 +       fi
++	;;
    restart|--restart)
  	$0 stop
  	$0 start
