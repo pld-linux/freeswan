@@ -17,6 +17,7 @@ Source2:	http://www.strongsec.com/%{name}/%{x509ver}-%{name}-%{version}-%{_rc}.t
 Patch0:		%{name}-showhostkey.patch
 Patch1:		%{name}-init.patch
 URL:		http://www.freeswan.org/
+%{!?_without_dist_kernel:BuildRequires:	kernel-headers(freeswan)}
 BuildRequires:	gmp-devel
 Prereq:		/sbin/chkconfig
 Prereq:		rc-scripts
