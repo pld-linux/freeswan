@@ -1,6 +1,6 @@
 --- freeswan-1.97/utils/setup	Wed Jun 20 17:55:13 2001
-+++ freeswan-1.97/utils/setup.org	Wed May  1 18:38:35 2002
-@@ -30,10 +30,28 @@
++++ freeswan-1.97/utils/setup.org	Thu May  2 12:08:39 2002
+@@ -30,7 +30,25 @@
  # description: IPsec provides encrypted and authenticated communications; \
  # KLIPS is the kernel half of it, Pluto is the user-level management daemon.
  
@@ -21,21 +21,18 @@
 +else
 +       exit 0
 +fi
- 
- 
- 
++
 +me='ipsec setup'               # for messages
 +
-+
- if test " $IPSEC_DIR" = " "	# if we were not called by the ipsec command
- then
- 	# we must establish a suitable PATH ourselves
+ 
+ 
+ 
 @@ -54,7 +72,7 @@
  if ! test "$found"
  then
  	echo "cannot find ipsec command -- \`$1' aborted" |
 -		logger -s -p daemon.error -t ipsec_setup
-+		logger -p daemon.error -t ipsec_setup
++	    logger -p daemon.error -t ipsec_setup
  	exit 1
  fi
  
@@ -44,11 +41,11 @@
  then
  	echo "$IPSEC_confreadstatus -- \`$1' aborted" |
 -		logger -s -p daemon.error -t ipsec_setup
-+		logger -p daemon.error -t ipsec_setup
++	    logger -p daemon.error -t ipsec_setup
  	exit 1
  fi
  IPSECsyslog=${IPSECsyslog-daemon.error}
-@@ -78,23 +96,73 @@
+@@ -78,23 +96,79 @@
  
  # do it
  case "$1" in
@@ -57,38 +54,41 @@
 -	then
 -		echo "permission denied (must be superuser)" |
 -			logger -s -p $IPSECsyslog -t ipsec_setup 2>&1
-+  start|--start|_autostart)
-+       # Check if the service is already running?
-+       if [ ! -f /var/lock/subsys/ipsec ]; then
-+               # show "Starting %s service" ipsec
-+               msg_starting ipsec
-+               busy
-+               if test " `id -u`" != " 0"
-+               then
-+                   echo "permission denied (must be superuser)" |
-+                       logger -p $IPSECsyslog -t ipsec_setup 2>&1
-+                   fail
-+                   exit 1
-+               fi
-+               {
-+                   ipsec _realsetup $1 ;
-+                   RETVAL=$?;
-+               } 2>&1 | logger -p $IPSECsyslog -t ipsec_setup 2>&1
-+
-+               if [ "$RETVAL" -eq 0 ];
-+               then
-+                   touch /var/lock/subsys/ipsec
-+                   ok
-+                   exit $RETVAL;
-+               fi
-+               fail
-+               exit $RETVAL
-+
-+       else
-+               # show "%s service is already running." ipsec
-+               msg_already_running ipsec
+-		exit 1
++	      start|--start|_autostart)
++	           # Check if the service is already running?
++	           if [ ! -f /var/lock/subsys/ipsec ]; then
++	                   # show "Starting %s service" ipsec
++	                   msg_starting ipsec
++	                   busy
++	                   if test " `id -u`" != " 0"
++	                   then
++	                       echo "permission denied (must be superuser)" |
++	                           logger -p $IPSECsyslog -t ipsec_setup 2>&1
++	                       fail
++	                       exit 1
++	                   fi
++	                   {
++	                       ipsec _realsetup $1 ;
++	                       RETVAL=$?;
++	                   } 2>&1 | logger -p $IPSECsyslog -t ipsec_setup 2>&1
++	
++	                   if [ "$RETVAL" -eq 0 ];
++	                   then
++	                       touch /var/lock/subsys/ipsec
++	                       ok
++	                       exit $RETVAL;
++	                   fi
++	                   fail
++	                   exit $RETVAL
++	
++	           else
++	                   # show "%s service is already running." ipsec
++	                   msg_already_running ipsec
++	
++	
 +		
- 		exit 1
++	exit 1
  	fi
 -	tmp=/var/run/ipsec_setup.st
 -	(
@@ -98,42 +98,45 @@
 -	st=`cat $tmp`
 -	rm -f $tmp
 -	exit $st
--	;;
-+       ;;
- 
-+  stop|--stop|_autostop)
-+        # Stop daemons.
-+        # show "Stopping %s service" ipsec
-+       if [ -f /var/lock/subsys/ipsec ]; then
-+               msg_stopping ipsec
-+               busy
-+               if test " `id -u`" != " 0"
-+               then
-+                   echo "permission denied (must be superuser)" |
-+                       logger -p $IPSECsyslog -t ipsec_setup 2>&1
-+                   fail
-+                   exit 1
-+               fi
-+               {
-+                   ipsec _realsetup $1 ;
-+                   RETVAL=$?;
-+               } 2>&1 | logger -p $IPSECsyslog -t ipsec_setup 2>&1
-+
-+               rm -f /var/lock/subsys/ipsec
-+
-+               if [ "$RETVAL" -eq 0 ];
-+               then
-+                   ok
-+                   exit $RETVAL;
-+               fi
-+               fail
-+               exit $RETVAL
-+       else
-+               # show "%s service is not running." ipsec
-+               msg_not_running ipsec
-+               exit 1
-+       fi
-+	;;
+ 	;;
+-
++	      stop|--stop|_autostop)
++	            # Stop daemons.
++	            # show "Stopping %s service" ipsec
++	           if [ -f /var/lock/subsys/ipsec ]; then
++	                   msg_stopping ipsec
++	                   busy
++	                   if test " `id -u`" != " 0"
++	                   then
++	                       echo "permission denied (must be superuser)" |
++	                           logger -p $IPSECsyslog -t ipsec_setup 2>&1
++	                       fail
++	                       exit 1
++	                   fi
++	                   {
++	                       ipsec _realsetup $1 ;
++	                       RETVAL=$?;
++	                   } 2>&1 | logger -p $IPSECsyslog -t ipsec_setup 2>&1
++	
++	                   rm -f /var/lock/subsys/ipsec
++	
++	                   if [ "$RETVAL" -eq 0 ];
++	                   then
++	                       ok
++	                       exit $RETVAL;
++	                   fi
++	                   fail
++	                   exit $RETVAL
++	           else
++	                   # show "%s service is not running." ipsec
++	                   msg_not_running ipsec
++	                   exit 1
++	           fi
++	           ;;
++	
++	
++	
++	
    restart|--restart)
  	$0 stop
  	$0 start
