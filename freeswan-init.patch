@@ -23,14 +23,14 @@ diff -durN freeswan-1.4.orig/utils/setup freeswan-1.4/utils/setup
  	# Start things rolling.
  	# (Warning, changes to this log message may affect barf.)
  	version="`ipsec --version | awk 'NR == 1 { print $3 }'`"
-+ 	show "Starting FreeS/WAN IPSEC"; busy
++ 	msg_starting "FreeS/WAN IPSEC"; busy
  	echo "Starting FreeS/WAN IPSEC $version..." | logit
  	rm -f $info
  	if test ! -r /dev/random
  	then
  		echo "...unable to start FreeS/WAN IPSEC, no /dev/random!" |
  									logit
-+ 		deltext; fail
++ 		fail
  		exit 1
  	fi
  	startklips 2>&1 | logit
@@ -38,12 +38,12 @@ diff -durN freeswan-1.4.orig/utils/setup freeswan-1.4/utils/setup
  	fore)	plutogo 2>&1 | logit	;;
  	esac
  	echo "...FreeS/WAN IPSEC started" | logonly
-+ 	deltext; ok
++ 	ok
  	;;
  
    stop|--stop)
  	# Shut things down.
-+ 	show "Stopping FreeS/WAN IPSEC" ; busy
++ 	msg_stopping "FreeS/WAN IPSEC" ; busy
  	echo "Stopping FreeS/WAN IPSEC..." | logit
  	if test " $IPSECforwardcontrol" = " yes"
  	then
@@ -51,7 +51,7 @@ diff -durN freeswan-1.4.orig/utils/setup freeswan-1.4/utils/setup
  	fi
  	rm -f $info
  	echo "...FreeS/WAN IPSEC stopped" | logonly
-+ 	deltext; ok
++ 	ok
  	;;
  
 +  status|--status)
