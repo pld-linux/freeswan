@@ -67,7 +67,7 @@ rm -rf $RPM_BUILD_ROOT
 if [ ! -f %{_sysconfdir}/ipsec/ipsec.secrets ];
 then
     echo generate RSA private key...
-    /usr/sbin/ipsec newhostkey > %{_sysconfdir}/ipsec/ipsec.secrets
+    /usr/sbin/ipsec newhostkey --output %{_sysconfdir}/ipsec/ipsec.secrets
     chmod 600 %{_sysconfdir}/ipsec/ipsec.secrets
 fi
 
