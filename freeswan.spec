@@ -1,7 +1,7 @@
 Summary:	Free IPSEC implemetation
 Name:		freeswan
 Version:	1.4
-Release:	0
+Release:	1
 License:	GPL
 Group:		Networking/Daemons
 Group(pl):	Sieciowe/Serwery
@@ -49,7 +49,6 @@ gzip -9nf README CREDITS CHANGES BUGS \
 
 %post
 /sbin/chkconfig --add ipsec 
-
 if [ -f /var/lock/subsys/ipsec ]; then
 	/etc/rc.d/init.d/ipsec restart >&2
 else
