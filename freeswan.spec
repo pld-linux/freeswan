@@ -7,7 +7,7 @@
 # _without_modules      - build only library+programs, no kernel modules
 %define x509ver		x509-1.4.1
 %define nat_tr_ver	0.6
-%define _25x_ver	20030705
+%define _25x_ver	20030713
 Summary:	Free IPSEC implemetation
 Summary(pl):	Publicznie dostêpna implementacja IPSEC
 Name:		freeswan
@@ -20,15 +20,16 @@ Source0:	ftp://ftp.xs4all.nl/pub/crypto/%{name}/%{name}-%{version}.tar.gz
 # Source0-md5:	0a5bdc7b93879c77de295fd75d704b4a
 Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-pl-man-pages.tar.bz2
 # Source1-md5:	6bd0b509015a2795cfb895aaab0bbc55
-Source2:	http://www.strongsec.com/%{name}/%{x509ver}-%{name}-2.01.tar.gz
+Source2:	http://www.strongsec.com/%{name}/%{x509ver}-%{name}-%{version}.tar.gz
 # Source2-md5:	5a76bed78f6aaf18d1509520ab7936fc
 Source3:	http://open-source.arkoon.net/freeswan/NAT-Traversal-%{nat_tr_ver}.tar.gz
 # Source3-md5:	6858a8535aa2611769d17e86e6735db2
+Source4:	http://gondor.apana.org.au/~herbert/freeswan/%{version}/freeswan-%{version}-linux-ipsec-%{_25x_ver}.patch.gz
+# Source4-md5:	bffd7e46ca167de041e75641b0b1e9ef
 Patch0:		%{name}-showhostkey.patch
 Patch1:		%{name}-init.patch
 Patch2:		%{name}-paths.patch
 Patch3:		%{name}-confread.patch
-Patch4:		http://gondor.apana.org.au/~herbert/freeswan/2.00/freeswan-linux-ipsec-%{_25x_ver}.patch.gz
 URL:		http://www.freeswan.org/
 BuildRequires:	gmp-devel
 BuildRequires:	rpmbuild(macros) >= 1.118
@@ -100,18 +101,20 @@ Modu³ j±dra SMP wykorzystywany przez FreeS/WAN
 %setup  -q -a2 -a3 -n %{name}-%{version}
 %patch0 -p1
 %patch1 -p1
-%{?!_without_x509:patch -p1 -s <%{x509ver}-%{name}-2.01/freeswan.diff}
+%{?!_without_x509:patch -p1 -s <%{x509ver}-%{name}-%{version}/freeswan.diff}
 #%patch2 -p1
 %patch3 -p1
 %{?!_without_NAT:patch -p1 -s <NAT-Traversal-%{nat_tr_ver}/NAT-Traversal-%{nat_tr_ver}-freeswan-2.00-x509-1.3.5.diff} 
-%{?!_without_25x:%patch4 -p1}
+%{?!_without_25x:gzip -d <%{SOURCE4}| patch -p1 -s}
+
 
 %build
 %define _kver `echo "%{_kernel_ver}" |awk -F. '{print $2}'`
 %if 0%{!?_without_modules:1}
   install -d kernelsrc
   lndir -silent /usr/src/linux kernelsrc
-  cp kernelsrc/.config kernelsrc/.config.old
+  mv kernelsrc/.config kernelsrc/.config.old
+  cp kernelsrc/.config.old kernelsrc/.config
   %if 0%{!?_without_dist_kernel:1}
     rm -rf kernelsrc/include/asm
     cd kernelsrc
@@ -157,7 +160,8 @@ CC=%{__cc}; export CC
     rm -rf kernelsrc
     install -d kernelsrc
     lndir -silent /usr/src/linux kernelsrc
-    cp kernelsrc/.config kernelsrc/.config.old
+    mv kernelsrc/.config kernelsrc/.config.old
+    cp kernelsrc/.config.old kernelsrc/.config
     %if 0%{!?_without_dist_kernel:1}
       rm -rf kernelsrc/include/asm
       cd kernelsrc
