@@ -1,6 +1,6 @@
-diff -Naur freeswan-1.95/Makefile.inc freeswan-1.95-p/Makefile.inc
---- freeswan-1.95/Makefile.inc	Fri Feb  1 04:26:40 2002
-+++ freeswan-1.95-p/Makefile.inc	Thu Feb  7 19:23:59 2002
+diff -Naur freeswan-1.95.orig/Makefile.inc freeswan-1.95/Makefile.inc
+--- freeswan-1.95.orig/Makefile.inc	Mon Feb 18 12:48:29 2002
++++ freeswan-1.95/Makefile.inc	Mon Feb 18 12:50:31 2002
 @@ -45,7 +45,7 @@
  DESTDIR=
  
@@ -10,6 +10,23 @@ diff -Naur freeswan-1.95/Makefile.inc freeswan-1.95-p/Makefile.inc
  
  # PUBDIR is where the "ipsec" command goes; beware, many things define PATH
  # settings which are assumed to include it (or at least, to include *some*
+@@ -59,14 +59,14 @@
+ 
+ # where the appropriate manpage tree is located
+ # location within INC_USRLOCAL
+-INC_MANDIR=man
++INC_MANDIR=share/man
+ # the full pathname
+ MANTREE=$(DESTDIR)$(INC_USRLOCAL)/$(INC_MANDIR)
+ # all relevant subdirectories of MANTREE
+ MANPLACES=man3 man5 man8
+ 
+ # where configuration files go
+-CONFDIR=$(DESTDIR)/etc
++CONFDIR=$(DESTDIR)/etc/ipsec
+ 
+ # An attempt is made to automatically figure out where boot/shutdown scripts 
+ # will finally go:  the first directory in INC_RCDIRS which exists gets them.
 @@ -80,10 +80,7 @@
  # will finally be (so utils/Makefile can create a symlink in BINDIR to the
  # place where the boot/shutdown script will finally be, rather than the
@@ -33,15 +50,15 @@ diff -Naur freeswan-1.95/Makefile.inc freeswan-1.95-p/Makefile.inc
  
  # extra options for use in kernel build
  KERNMAKEOPTS=
-diff -Naur freeswan-1.95/pluto/Makefile freeswan-1.95-p/pluto/Makefile
---- freeswan-1.95/pluto/Makefile	Tue Nov 27 17:33:42 2001
-+++ freeswan-1.95-p/pluto/Makefile	Thu Feb  7 19:26:29 2002
+diff -Naur freeswan-1.95.orig/pluto/Makefile freeswan-1.95/pluto/Makefile
+--- freeswan-1.95.orig/pluto/Makefile	Mon Feb 18 12:48:23 2002
++++ freeswan-1.95/pluto/Makefile	Mon Feb 18 12:55:38 2002
 @@ -71,7 +71,8 @@
  
  CPPFLAGS = $(HDRDIRS) $(BYTE_ORDER) \
  	-DPLUTO -DKLIPS -DDODGE_DH_MISSING_ZERO_BUG \
 -	-DDEBUG -DGCC_LINT # -DLEAK_DETECTIVE
-+	-DDEBUG -DGCC_LINT -DSHARED_SECRETS_FILE='"/etc/freeswan/ipsec.secrets"'
++	-DDEBUG -DGCC_LINT -DSHARED_SECRETS_FILE='"/etc/ipsec/ipsec.secrets"'
 +	# -DLEAK_DETECTIVE
  
  ALLFLAGS = $(CPPFLAGS) $(CFLAGS)

@@ -1,64 +1,115 @@
-diff -durN freeswan-1.4.orig/utils/setup freeswan-1.4/utils/setup
---- freeswan-1.4.orig/utils/setup	Mon May 22 06:37:57 2000
-+++ freeswan-1.4/utils/setup	Sat Jun 10 13:07:02 2000
-@@ -37,6 +37,8 @@
- 	export PATH
- fi
+diff -Naur freeswan-1.95.orig/utils/setup freeswan-1.95/utils/setup
+--- freeswan-1.95.orig/utils/setup	Mon Feb 18 12:48:24 2002
++++ freeswan-1.95/utils/setup	Mon Feb 18 13:45:46 2002
+@@ -30,10 +30,27 @@
+ # description: IPsec provides encrypted and authenticated communications; \
+ # KLIPS is the kernel half of it, Pluto is the user-level management daemon.
  
+-me='ipsec setup'		# for messages
++# Source function library
 +. /etc/rc.d/init.d/functions
 +
- me='ipsec setup'		# for messages
++# Get network config
++. /etc/sysconfig/network
++
++# Check that networking is up.
++if is_yes "${NETWORKING}"; then
++	if [ ! -f /var/lock/subsys/network ]; then
++		# nls "ERROR: Networking is down. %s can't be run." <service>
++		msg_network_down <service>
++		exit 1
++	fi
++else
++	exit 0
++fi
  
- # make sure output of (e.g.) ifconfig is in English
-@@ -368,7 +370,7 @@
- # logging control
- logit() {
- 	IPSECsyslog=${IPSECsyslog-daemon.error}
--	logger -s -p $IPSECsyslog -t ipsec_setup 2>&1
-+	logger -p $IPSECsyslog -t ipsec_setup 2>&1
- }
- logonly() {
- 	IPSECsyslog=${IPSECsyslog-daemon.error}
-@@ -391,12 +393,14 @@
- 	# Start things rolling.
- 	# (Warning, changes to this log message may affect barf.)
- 	version="`ipsec --version | awk 'NR == 1 { print $3 }'`"
-+ 	msg_starting "FreeS/WAN IPSEC"; busy
- 	echo "Starting FreeS/WAN IPSEC $version..." | logit
- 	rm -f $info
- 	if test ! -r /dev/random
- 	then
- 		echo "...unable to start FreeS/WAN IPSEC, no /dev/random!" |
- 									logit
-+ 		fail
+ 
+ 
++me='ipsec setup'		# for messages
++
+ if test " $IPSEC_DIR" = " "	# if we were not called by the ipsec command
+ then
+ 	# we must establish a suitable PATH ourselves
+@@ -54,7 +71,7 @@
+ if ! test "$found"
+ then
+ 	echo "cannot find ipsec command -- \`$1' aborted" |
+-		logger -s -p daemon.error -t ipsec_setup
++		logger -p daemon.error -t ipsec_setup
+ 	exit 1
+ fi
+ 
+@@ -65,7 +82,7 @@
+ if test " $IPSEC_confreadstatus" != " "
+ then
+ 	echo "$IPSEC_confreadstatus -- \`$1' aborted" |
+-		logger -s -p daemon.error -t ipsec_setup
++		logger -p daemon.error -t ipsec_setup
+ 	exit 1
+ fi
+ IPSECsyslog=${IPSECsyslog-daemon.error}
+@@ -78,21 +95,51 @@
+ 
+ # do it
+ case "$1" in
+-  start|--start|stop|--stop|_autostop|_autostart)
+-	if test " `id -u`" != " 0"
+-	then
+-		echo "permission denied (must be superuser)" |
+-			logger -s -p $IPSECsyslog -t ipsec_setup 2>&1
++  start|--start|_autostart)
++	# Check if the service is already running?
++	if [ ! -f /var/lock/subsys/ipsec ]; then
++		# show "Starting %s service" ipsec
++		msg_starting ipsec
++		if test " `id -u`" != " 0"
++		then
++		    echo "permission denied (must be superuser)" |
++			logger -p $IPSECsyslog -t ipsec_setup 2>&1
++		    exit 1
++		fi
++		(
++		    ipsec _realsetup $1 
++		    RETVAL=$?
++		) 2>&1 | logger -p $IPSECsyslog -t ipsec_setup 2>&1
++		RETVAL=$?
++		[ $RETVAL -eq 0 ] && touch /var/lock/subsys/ipsec
++	else
++		# show "%s service is already running." ipsec
++		msg_already_running ipsec
  		exit 1
  	fi
- 	startklips 2>&1 | logit
-@@ -434,10 +438,12 @@
- 	fore)	plutogo 2>&1 | logit	;;
- 	esac
- 	echo "...FreeS/WAN IPSEC started" | logonly
-+ 	ok
+-	tmp=/var/run/ipsec_setup.st
+-	(
+-		ipsec _realsetup $1
+-		echo "$?" >$tmp
+-	) 2>&1 | logger -s -p $IPSECsyslog -t ipsec_setup 2>&1
+-	st=`cat $tmp`
+-	rm -f $tmp
+-	exit $st
++	;;
++
++  stop|--stop|_autostop)
++        # Stop daemons.
++        # show "Stopping %s service" ipsec
++	if [ -f /var/lock/subsys/ipsec ]; then
++		msg_stopping ipsec
++		if test " `id -u`" != " 0"
++		then
++		    echo "permission denied (must be superuser)" |
++			logger -p $IPSECsyslog -t ipsec_setup 2>&1
++		    exit 1
++		fi
++		(
++		    ipsec _realsetup $1 
++		    RETVAL=$?
++		) 2>&1 | logger -p $IPSECsyslog -t ipsec_setup 2>&1
++		rm -f /var/lock/subsys/ipsec
++	else
++		# show "%s service is not running." ipsec
++		msg_not_running ipsec
++		exit 1
++	fi	
  	;;
  
-   stop|--stop)
- 	# Shut things down.
-+ 	msg_stopping "FreeS/WAN IPSEC" ; busy
- 	echo "Stopping FreeS/WAN IPSEC..." | logit
- 	if test " $IPSECforwardcontrol" = " yes"
- 	then
-@@ -485,8 +491,14 @@
- 	fi
- 	rm -f $info
- 	echo "...FreeS/WAN IPSEC stopped" | logonly
-+ 	ok
- 	;;
- 
-+  status|--status)
-+ 	status pluto
-+ 	ipsec look
-+ 	;;
-+ 	
    restart|--restart)
- 	$0 stop
- 	$0 start
