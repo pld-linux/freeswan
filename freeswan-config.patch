@@ -1,60 +1,93 @@
-diff -Naur freeswan-1.95/utils/_confread freeswan-1.95-p/utils/_confread
---- freeswan-1.95/utils/_confread	Sun Oct 14 01:42:50 2001
-+++ freeswan-1.95-p/utils/_confread	Thu Feb  7 19:29:06 2002
+diff -Naur freeswan-1.95.orig/utils/Makefile freeswan-1.95/utils/Makefile
+--- freeswan-1.95.orig/utils/Makefile	Mon Feb 18 12:48:24 2002
++++ freeswan-1.95/utils/Makefile	Mon Feb 18 13:12:55 2002
+@@ -67,7 +67,7 @@
+ send-pr.8: send-pr.man
+ 	sed "s/xVERSIONx/$(IPSECVERSION)/" send-pr.man | sed "s:@IPSEC_DIR@:$(FINALBINDIR):" >$@
+ 
+-# generate RSA private key... if, and only if, /etc/ipsec.secrets does
++# generate RSA private key... if, and only if, /etc/ipsec/ipsec.secrets does
+ # not already exist
+ BLURB=-- not filled in because ipsec.secrets existed at build time --
+ secrets.eg:	secrets.proto ranbits rsasigkey
+diff -Naur freeswan-1.95.orig/utils/_confread freeswan-1.95/utils/_confread
+--- freeswan-1.95.orig/utils/_confread	Mon Feb 18 12:48:24 2002
++++ freeswan-1.95/utils/_confread	Mon Feb 18 13:10:13 2002
+@@ -14,7 +14,7 @@
+ #
+ # RCSID $Id$
+ #
+-# Extract configuration info from /etc/ipsec.conf, repackage as assignments
++# Extract configuration info from /etc/ipsec/ipsec.conf, repackage as assignments
+ # to shell variables or tab-delimited fields.  Success or failure is reported
+ # inline, as extra data, due to the vagaries of shell backquote handling.
+ # In the absence of --varprefix, output is tab-separated fields, like:
 @@ -41,7 +41,7 @@
  #	exit 1
  # fi
  
 -config=/etc/ipsec.conf
-+config=/etc/freeswan/ipsec.conf
++config=/etc/ipsec/ipsec.conf
  include=yes
  type=conn
  fieldfmt=yes
-diff -Naur freeswan-1.95/utils/auto freeswan-1.95-p/utils/auto
---- freeswan-1.95/utils/auto	Thu Jan 31 21:28:59 2002
-+++ freeswan-1.95-p/utils/auto	Thu Feb  7 19:29:19 2002
+diff -Naur freeswan-1.95.orig/utils/auto freeswan-1.95/utils/auto
+--- freeswan-1.95.orig/utils/auto	Mon Feb 18 12:48:24 2002
++++ freeswan-1.95/utils/auto	Mon Feb 18 13:07:54 2002
 @@ -24,7 +24,7 @@
  	other options: [--config ipsecconfigfile] [--verbose] [--show]"
  
  showonly=
 -config=/etc/ipsec.conf
-+config=/etc/freeswan/ipsec.conf
++config=/etc/ipsec/ipsec.conf
  info=/var/run/ipsec.info
  shopts=
  noinclude=
-diff -Naur freeswan-1.95/utils/barf freeswan-1.95-p/utils/barf
---- freeswan-1.95/utils/barf	Tue Nov 27 03:03:00 2001
-+++ freeswan-1.95-p/utils/barf	Thu Feb  7 19:30:26 2002
-@@ -144,15 +144,15 @@
+diff -Naur freeswan-1.95.orig/utils/barf freeswan-1.95/utils/barf
+--- freeswan-1.95.orig/utils/barf	Mon Feb 18 12:48:24 2002
++++ freeswan-1.95/utils/barf	Mon Feb 18 13:09:09 2002
+@@ -144,9 +144,9 @@
  _________________________ ipsec/showdefaults
  ipsec showdefaults
  _________________________ ipsec/conf
 -ipsec _include /etc/ipsec.conf | ipsec _keycensor
-+ipsec _include /etc/freeswan/ipsec.conf | ipsec _keycensor
++ipsec _include /etc/ipsec/ipsec.conf | ipsec _keycensor
  _________________________ ipsec/secrets
 -ipsec _include /etc/ipsec.secrets | ipsec _secretcensor
-+ipsec _include /etc/freeswan/ipsec.secrets | ipsec _secretcensor
++ipsec _include /etc/ipsec/ipsec.secrets | ipsec _secretcensor
  _________________________ ipsec/ls-dir
--ls -l ${IPSEC_DIR-/usr/local/lib/ipsec}
-+ls -l ${IPSEC_DIR-/usr/lib/ipsec}
+ ls -l ${IPSEC_DIR-/usr/local/lib/ipsec}
  _________________________ ipsec/updowns
--for f in `ls ${IPSEC_DIR-/usr/local/lib/ipsec} | egrep updown`
-+for f in `ls ${IPSEC_DIR-/usr/lib/ipsec} | egrep updown`
- do
--	cat ${IPSEC_DIR-/usr/local/lib/ipsec}/$f
-+	cat ${IPSEC_DIR-/usr/lib/ipsec}/$f
- done
- _________________________ proc/net/dev
- cat /proc/net/dev
-diff -Naur freeswan-1.95/utils/manual freeswan-1.95-p/utils/manual
---- freeswan-1.95/utils/manual	Fri Jun  1 17:49:13 2001
-+++ freeswan-1.95-p/utils/manual	Thu Feb  7 19:30:46 2002
+diff -Naur freeswan-1.95.orig/utils/conf.proto freeswan-1.95/utils/conf.proto
+--- freeswan-1.95.orig/utils/conf.proto	Mon Feb 18 12:48:24 2002
++++ freeswan-1.95/utils/conf.proto	Mon Feb 18 13:09:51 2002
+@@ -1,4 +1,4 @@
+-# /etc/ipsec.conf - FreeS/WAN IPsec configuration file
++# /etc/ipsec/ipsec.conf - FreeS/WAN IPsec configuration file
+ # RCSID $Id$
+ 
+ # More elaborate and more varied sample configurations can be found
+diff -Naur freeswan-1.95.orig/utils/manual freeswan-1.95/utils/manual
+--- freeswan-1.95.orig/utils/manual	Mon Feb 18 12:48:24 2002
++++ freeswan-1.95/utils/manual	Mon Feb 18 13:13:17 2002
 @@ -26,7 +26,7 @@
  unset LANG LANGUAGE LC_ALL LC_MESSAGES
  
  showonly=
 -config=/etc/ipsec.conf
-+config=/etc/freeswan/ipsec.conf
++config=/etc/ipsec/ipsec.conf
  info=/var/run/ipsec.info
  shopts=
  other=0
+diff -Naur freeswan-1.95.orig/utils/showhostkey freeswan-1.95/utils/showhostkey
+--- freeswan-1.95.orig/utils/showhostkey	Mon Feb 18 12:48:24 2002
++++ freeswan-1.95/utils/showhostkey	Mon Feb 18 13:14:06 2002
+@@ -17,7 +17,7 @@
+ me="ipsec showhostkey"
+ usage="Usage: $me [--file secrets] [--left] [--right] [--txt gateway] [--id id]"
+ 
+-file=/etc/ipsec.secrets
++file=/etc/ipsec/ipsec.secrets
+ fmt="dns"
+ gw=
+ id=

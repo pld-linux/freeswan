@@ -1,7 +1,7 @@
 Summary:	Free IPSEC implemetation
 Summary(pl):	Publicznie dostêpna implementacja IPSEC
 Name:		freeswan
-Version:	1.8
+Version:	1.95
 Release:	3
 License:	GPL
 Group:		Networking/Daemons
@@ -97,5 +97,5 @@ fi
 %attr(754,root,root) /etc/rc.d/init.d/*
 %dir %{_libdir}/ipsec
 %attr(755,root,root) %{_libdir}/ipsec/*
-%attr(751,root,root) %dir %{_sysconfdir}/freeswan
-%attr(640,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/freeswan/*
+%attr(751,root,root) %dir %{_sysconfdir}/ipsec
+%attr(640,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/ipsec/*
