@@ -2,7 +2,7 @@
 # _without_x509		- without x509 support
 # _without_dist_kernel	- without distribution kernel
 
-%define x509ver		 x509-1.3.1
+%define x509ver		 x509-1.3.5
 Summary:	Free IPSEC implemetation
 Summary(pl):	Publicznie dostêpna implementacja IPSEC
 Name:		freeswan
@@ -15,12 +15,11 @@ Source0:	ftp://ftp.xs4all.nl/pub/crypto/%{name}/development/%{name}-%{version}.t
 Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-pl-man-pages.tar.bz2
 # Source1-md5:	6bd0b509015a2795cfb895aaab0bbc55
 Source2:	http://www.strongsec.com/%{name}/%{x509ver}-%{name}-%{version}.tar.gz
-# Source2-md5:	28d4e94c1285b7ed013027a481ed3304
+# Source2-md5:	7efe6fd8615ad48e143b1b65f7b1c343
 Patch0:		%{name}-showhostkey.patch
 Patch1:		%{name}-init.patch
-Patch2:		%{name}-des.patch
-Patch3:		%{name}-paths.patch
-Patch4:		%{name}-confread.patch
+Patch2:		%{name}-paths.patch
+Patch3:		%{name}-confread.patch
 URL:		http://www.freeswan.org/
 BuildRequires:	gmp-devel
 Prereq:		/sbin/chkconfig
@@ -57,7 +56,6 @@ FreeS/WAN jest darmow± implementacj± protoko³u IPSEC.
 %{?!_without_x509:patch -p1 <%{x509ver}-%{name}-%{version}/freeswan.diff}
 %patch2 -p1
 %patch3 -p1
-%patch4 -p1
 %build
 
 USERCOMPILE="%{rpmcflags}" ; export USERCOMPILE
