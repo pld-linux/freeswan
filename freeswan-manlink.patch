@@ -1,0 +1,12 @@
+diff -durN freeswan-1.3.orig1/utils/manlink freeswan-1.3/utils/manlink
+--- freeswan-1.3.orig1/utils/manlink	Wed Jul  7 05:12:52 1999
++++ freeswan-1.3/utils/manlink	Tue Apr 25 11:38:27 2000
+@@ -49,7 +49,7 @@
+ 		esac
+ 		if test " $ff" != " $m"
+ 		then
+-			ln -f -s $m $ff
++			echo ".so $m" > $ff
+ 		fi
+ 	done
+ done
