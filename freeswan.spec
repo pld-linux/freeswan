@@ -34,19 +34,17 @@ FreeS/WAN is a freely-distributable implementation of IPSEC protocol.
 
 %build
 OPT_FLAGS="$RPM_OPT_FLAGS"; export OPT_FLAGS
-LDFLAGS="-s"; export LDFLAGS
 %{__make} programs
 
 %install
 rm -rf $RPM_BUILD_ROOT
-
 install -d $RPM_BUILD_ROOT{%{_sysconfdir}/freeswan,/etc/rc.d/init.d,/var/run/pluto}
+
 %{__make} install \
 	DESTDIR="$RPM_BUILD_ROOT" 
 
 gzip -9nf README CREDITS CHANGES BUGS \
-          doc/{kernel.notes,impl.notes,examples,prob.report,standards} \
-	  $RPM_BUILD_ROOT%{_mandir}/man*/*
+          doc/{kernel.notes,impl.notes,examples,prob.report,standards}
 
 %post
 /sbin/chkconfig --add ipsec 
