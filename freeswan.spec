@@ -2,7 +2,7 @@
 # _without_x509		- without x509 support
 # _without_dist_kernel	- without distribution kernel
 # _without_NAT		- without NAT-Traversal
-# _without_2.5.x	- without FreeS/WAN's keying daemon to work with 
+# _without_25x	- without FreeS/WAN's keying daemon to work with 
 #			  the 2.5 kernel IPsec implementation
 %define x509ver		x509-1.3.6
 %define nat_tr_ver	0.6
@@ -18,8 +18,8 @@ Source0:	ftp://ftp.xs4all.nl/pub/crypto/%{name}/%{name}-%{version}.tar.gz
 # Source0-md5:	0a5bdc7b93879c77de295fd75d704b4a
 Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-pl-man-pages.tar.bz2
 # Source1-md5:	6bd0b509015a2795cfb895aaab0bbc55
-# #Ssource2:	http://www.strongsec.com/%{name}/%{x509ver}-%{name}-%{version}.tar.gz
-# Ssource2-md5:	7efe6fd8615ad48e143b1b65f7b1c343
+Source2:	http://www.strongsec.com/%{name}/%{x509ver}-%{name}-2.00.tar.gz
+# Source2-md5:	e8d609f46cb2c902ab319cc2812086b1
 Source3:	http://open-source.arkoon.net/freeswan/NAT-Traversal-%{nat_tr_ver}.tar.gz
 # Source3-md5:	6858a8535aa2611769d17e86e6735db2
 Patch0:		%{name}-showhostkey.patch
@@ -61,16 +61,41 @@ FreeS/WAN jest darmow± implementacj± protoko³u IPSEC.
 %patch0 -p1
 %patch1 -p1
 %{?!_without_x509:patch -p1 <%{x509ver}-%{name}-%{version}/freeswan.diff}
-%patch2 -p1
+#%patch2 -p1
 %patch3 -p1
-%{?!_without_nat-traversal:patch -p1 <NAT-Traversal-%{nat_tr_ver}/} 
-%{?!_without_2.5.x}:%patch4 -p1 freeswan-linux-ipsec-%{_25x_ver}.patch.gz}
+%{?!_without_NAT:patch -p1 <NAT-Traversal-%{nat_tr_ver}/} 
+%{?!_without_25x:%patch4 -p1}
+
+#prep to build kernel module
+install -d kernelsrc/{include/{linux,net},Documentation,net,net/ipv4,scripts}
+for i in alpha arm cris i386 ia64 m68k mips mips64 parisc ppc ppc64 s390 \
+	s390x sh sparc sparc64 x86_64; do
+   install -d kernelsrc/arch/$i
+   install /usr/src/linux/arch/$i/{defconfig,Makefile,config.in} kernelsrc/arch/$i
+done
+install /usr/src/linux/{.config,Makefile,Rules.make} kernelsrc
+install /usr/src/linux/Documentation/Configure.help kernelsrc/Documentation
+install /usr/src/linux/include/linux/{version,autoconf,config,modversions,\
+types,socket,ip,netdevice,proc_fs,inetdevice,in_route}.h kernelsrc/include/linux
+#install /usr/src/linux/include/linux/*.h kernelsrc/include/linux
+install /usr/src/linux/include/net/{ip,arp,snmp,sock,route,dst,inetpeer,\
+neighbour,if_inet6,protocol,x25,ipx,dn,datalink}.h kernelsrc/include/net
+#install /usr/src/linux/include/net/*.h kernelsrc/include/net
+install /usr/src/linux/net/{Config.in,Makefile} kernelsrc/net
+install /usr/src/linux/net/ipv4/af_inet.c kernelsrc/net/ipv4
+install /usr/src/linux/scripts/{Configure,pathdown.sh} kernelsrc/scripts
 %build
 
 USERCOMPILE="%{rpmcflags}" ; export USERCOMPILE
 OPT_FLAGS="%{rpmcflags}"; export OPT_FLAGS
 CC=%{__cc}; export CC
-%{__make} programs \
+
+#%{__make} oldmod \
+#	KERNELSRC=kernelsrc
+
+
+%{__make} precheck verset kpatch ocf confcheck programs module \
+	KERNELSRC="`pwd`/kernelsrc"
 	FINALCONFDIR=%{_sysconfdir}/ipsec \
 	FINALCONFFILE=%{_sysconfdir}/ipsec/ipsec.conf \
 	INC_USRLOCAL=/usr \
