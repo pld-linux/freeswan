@@ -12,7 +12,7 @@ Summary:	Free IPSEC implemetation
 Summary(pl):	Publicznie dostêpna implementacja IPSEC
 Name:		freeswan
 Version:	2.01
-%define _rel    0.2
+%define _rel    0.3
 Release:        %{_rel}
 License:	GPL
 Group:		Networking/Daemons
@@ -35,12 +35,12 @@ Prereq:		/sbin/chkconfig
 Prereq:		rc-scripts
 Requires:	gawk
 Requires:       gmp
-%{!?_without_dist_kernel:BuildRequires: kernel-headers}
+%{!?_without_dist_kernel:%{!?_without_modules:BuildRequires:	kernel-headers}}
 %{!?_without_dist_kernel:%{!?_without_modules:BuildRequires:    kernel-source}}
+%{!?_without_dist_kernel:%{!?_without_modules:BuildRequires:    kernel-doc}}
+# XFree86 is required to use usefull lndir
+%{!?_without_dist_kernel:%{!?_without_modules:BuildRequires:    XFree86}}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
-
-%define x509 1
-%{?_without_x509:%define x509 0}
 
 %description
 The basic idea of IPSEC is to provide security functions
@@ -83,33 +83,44 @@ Modu³ j±dra wykorzystywany przez FreeS/WAN
 %{?!_without_x509:patch -p1 -s <%{x509ver}-%{name}-2.00/freeswan.diff}
 #%patch2 -p1
 %patch3 -p1
-%{?!_without_NAT:patch -p1 -s <NAT-Traversal-0.6/NAT-Traversal-0.6-freeswan-2.00-x509-1.3.5.diff} 
+%{?!_without_NAT:patch -p1 -s <NAT-Traversal-%{nat_tr_ver}/NAT-Traversal-%{nat_tr_ver}-freeswan-2.00-x509-1.3.5.diff} 
 %{?!_without_25x:%patch4 -p1}
 
 %build
-install -d kernelsrc
-lndir -silent /usr/src/linux kernelsrc
-rm -rf kernelsrc/include/asm
-mv kernelsrc/.config kernelsrc/.config.old
-cp kernelsrc/.config.old kernelsrc/.config
-#rm -rf kernelsrc/{crypto,include/{freeswan,zlib},net/ipsec,lib/zlib}
-#rm kernelsrc/{include/{freeswan,pfkey,pfkeyv2}.h,net/ipv4/af_inet.c}
-echo "CONFIG_IPSEC=m" >> kernelsrc/.config
-echo "CONFIG_IPSEC_IPIP=y" >> kernelsrc/.config
-echo "CONFIG_IPSEC_AH=y" >> kernelsrc/.config
-echo "CONFIG_IPSEC_AUTH_HMAC_MD5=y" >> kernelsrc/.config
-echo "CONFIG_IPSEC_AUTH_HMAC_SHA1=y" >> kernelsrc/.config
-echo "CONFIG_IPSEC_ESP=y" >> kernelsrc/.config
-echo "CONFIG_IPSEC_ENC_3DES=y" >> kernelsrc/.config
-echo "CONFIG_IPSEC_IPCOMP=y" >> kernelsrc/.config
-echo "CONFIG_IPSEC_DEBUG=y" >> kernelsrc/.config
-
+%if 0%{!?_without_modules:1}
+  install -d kernelsrc
+  lndir -silent /usr/src/linux kernelsrc
+  mv kernelsrc/.config kernelsrc/.config.old
+  cp kernelsrc/.config.old kernelsrc/.config
+    %if 0%{!?_without_dist_kernel:1}
+    rm -rf kernelsrc/include/asm
+    cd kernelsrc
+    patch -R -p1 <../linux/net/Makefile.fs2_4.patch
+    patch -R -p1 <../linux/net/Config.in.fs2_4.patch
+    patch -R -p1 <../linux/net/ipv4/af_inet.c.fs2_4.patch
+    patch -R -p1 <../linux/Documentation/Configure.help.fs2_4.patch
+    cd ..
+    rm -rf kernelsrc/{crypto,include/{freeswan,zlib,crypto},lib/{zlib,libfreeswan},net/ipsec}
+    rm kernelsrc/include/{freeswan,pfkey,pfkeyv2}.h
+  %endif
+  echo "CONFIG_IPSEC=m" >> kernelsrc/.config
+  echo "CONFIG_IPSEC_IPIP=y" >> kernelsrc/.config
+  echo "CONFIG_IPSEC_AH=y" >> kernelsrc/.config
+  echo "CONFIG_IPSEC_AUTH_HMAC_MD5=y" >> kernelsrc/.config
+  echo "CONFIG_IPSEC_AUTH_HMAC_SHA1=y" >> kernelsrc/.config
+  echo "CONFIG_IPSEC_ESP=y" >> kernelsrc/.config
+  echo "CONFIG_IPSEC_ENC_3DES=y" >> kernelsrc/.config
+  echo "CONFIG_IPSEC_IPCOMP=y" >> kernelsrc/.config
+  echo "CONFIG_IPSEC_DEBUG=y" >> kernelsrc/.config
+%endif
 
 USERCOMPILE="%{rpmcflags}" ; export USERCOMPILE
 OPT_FLAGS="%{rpmcflags}"; export OPT_FLAGS
 CC=%{__cc}; export CC
 
-%{__make} precheck verset kpatch ocf confcheck programs module\
+
+
+%{__make} %{!?_without_modules:precheck verset kpatch ocf confcheck module} programs \
 	BIND9STATICLIBDIR=%{_libdir} \
 	FINALCONFDIR=%{_sysconfdir}/ipsec \
 	FINALCONFFILE=%{_sysconfdir}/ipsec/ipsec.conf \
@@ -117,7 +128,7 @@ CC=%{__cc}; export CC
 	INC_MANDIR=share/man \
 	FINALRCDIR=%{_sysconfdir}/rc.d/init.d \
 	FINALLIBEXECDIR=%{_libdir}/ipsec \
-        KERNELSRC="`pwd`/kernelsrc" \
+        KERNELSRC="`pwd`/kernelsrc" 
 
 
 %install
@@ -136,7 +147,7 @@ install -d $RPM_BUILD_ROOT{%{_sysconfdir}/ipsec,/etc/rc.d/init.d,/var/run/pluto}
         INC_MANDIR=share/man
 
 
-%if %{x509}
+%if 0%{!?_without_x509:1}
  install -d  $RPM_BUILD_ROOT%{_sysconfdir}/ipsec/ipsec.d 
  for i in crls cacerts private policies; do
 	install -d  $RPM_BUILD_ROOT%{_sysconfdir}/ipsec/ipsec.d/$i
@@ -201,7 +212,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/ipsec/*
 %attr(751,root,root) %dir %{_sysconfdir}/ipsec
 %attr(640,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/ipsec/ipsec.conf
-%if %{x509}
+%if 0%{!?_without_x509:1}
 %attr(0700,root,root) %dir %{_sysconfdir}/ipsec/ipsec.d
 %attr(0700,root,root) %dir %{_sysconfdir}/ipsec/ipsec.d/certs
 %attr(0700,root,root) %dir %{_sysconfdir}/ipsec/ipsec.d/crls
