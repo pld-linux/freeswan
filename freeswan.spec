@@ -23,8 +23,9 @@ Patch2:		%{name}-config.patch
 Patch3:		%{name}-init.patch
 Patch4:		%{name}-keygen.patch
 Patch5:		x509-config.patch
-Patch6:		%{name}-kernel-module.patch
-Patch7:		%{name}-make-module.patch
+Patch6:		kernel-ipsec-bridge.patch
+#Patch6:		%{name}-kernel-module.patch
+#Patch7:		%{name}-make-module.patch
 URL:		http://www.freeswan.org/
 Prereq:		/sbin/chkconfig
 Prereq:		rc-scripts
@@ -76,6 +77,11 @@ Modu³ j±dra do IPSec
 
 %prep
 %setup  -q -a2
+
+%if %{klips}
+cp -pR %{_kernelsrcdir}/ linux
+%endif
+
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
@@ -84,7 +90,7 @@ Modu³ j±dra do IPSec
 
 %if %{klips}
 %patch6 -p1
-%patch7 -p1
+#%patch7 -p1
 %endif
 
 %{?!_without_x509:patch -p1 <%{x509ver}-%{name}-%{version}/freeswan.diff}
@@ -95,34 +101,28 @@ Modu³ j±dra do IPSec
 %build
 
 %if %{klips}
-cp -pR %{_kernelsrcdir}/ linux
-%{__make} KERNELSRC=linux insert
-#%{?!_with_oldconfig:%{?kextra:perl -p -i -e "s/^EXTRAVERSION.*/EXTRAVERSION = -%{kextra}/" linux/Makefile}}
 
-#cd linux
-#if [ -f .config ]; then
-#    cat %{SOURCE3} >> .config	
-#	
-#else
-#  if [ -f configs/kernel-%{_kernel_ver}-%{_target_cpu}%{?_with_smp:-smp}.config ]; then
-#    cp configs/kernel-%{_kernel_ver}-%{_target_cpu}%{?_with_smp:-smp}.config .config
-# 
-#    echo "ERROR: There is no kernel configuration available."
-#    echo "Configure your kernel first and add --with oldconfig"
-#    echo "to rpmbuild command line when trying to build with"
-#    echo "klips module next time."
-#    exit 1
-# i
+cd linux
+if [ -f .config ]; then
+    cat %{SOURCE3} >> .config	
+	
+else
+    echo "ERROR: There is no kernel configuration available."
+    echo "Configure your kernel first and add --with oldconfig"
+    echo "to rpmbuild command line when trying to build with"
+    echo "klips module next time."
+    exit 1
+
 #  make oldconfig_nonint 1>/dev/null 2>&1
-#fi
-#%{__make} -s include/linux/version.h
-#cd ..
+fi
+%{__make} -s include/linux/version.h
+cd ..
 %endif
 
-
+USERCOMPILE="%{rpmcflags}" ; export USERCOMPILE
 OPT_FLAGS="%{rpmcflags}"; export OPT_FLAGS
 CC=%{__cc}; export CC
-%{__make}   %{?_with_klips:KERNELSRC=linux precheck insert ocf module}  programs
+%{__make}   %{?!_without_klips:KERNELSRC=linux precheck insert ocf module}  programs
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -144,8 +144,8 @@ done
 %endif
 
 %if %{klips}
-install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/kernel/net/ipsec
-install linux/net/ipsec/ipsec.o $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/kernel/net/ipsec/ipsec.o
+install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc
+install linux/net/ipsec/ipsec.o $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc/ipsec.o
 %endif
 
 bzip2 -dc %{SOURCE1} | tar xf - -C $RPM_BUILD_ROOT%{_mandir}
