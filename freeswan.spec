@@ -66,7 +66,7 @@ CC=%{__cc}; export CC
 	INC_USRLOCAL=/usr \
 	INC_MANDIR=share/man \
 	FINALRCDIR=%{_sysconfdir}/rc.d/init.d \
-	FINALLIBEXECDIR=${_libdir}/ipsec 
+	FINALLIBEXECDIR=%{_libdir}/ipsec 
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -136,6 +136,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(640,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/ipsec/ipsec.conf
 %if %{x509}
 %attr(0700,root,root) %dir %{_sysconfdir}/ipsec/ipsec.d
+%attr(0700,root,root) %dir %{_sysconfdir}/ipsec/ipsec.d/certs
 %attr(0700,root,root) %dir %{_sysconfdir}/ipsec/ipsec.d/crls
 %attr(0700,root,root) %dir %{_sysconfdir}/ipsec/ipsec.d/cacerts
 %attr(0700,root,root) %dir %{_sysconfdir}/ipsec/ipsec.d/private
