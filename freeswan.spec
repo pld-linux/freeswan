@@ -1,8 +1,8 @@
 # Conditional builds
-bcond_with	NAT		# with NAT-Traversal
-bcond_without	x509		# without x509 support
-bcond_without	dist_kernel	# without sources of distribution kernel
-bcond_without	modules		# build only library+programs, no kernel modules
+%bcond_with	NAT		# with NAT-Traversal
+%bcond_without	x509		# without x509 support
+%bcond_without	dist_kernel	# without sources of distribution kernel
+%bcond_without	modules		# build only library+programs, no kernel modules
 #
 %define x509ver		x509-1.4.8
 %define nat_tr_ver	0.6
