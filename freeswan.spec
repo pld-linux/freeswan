@@ -11,6 +11,7 @@ Release:	1
 License:	GPL
 Group:		Networking/Daemons
 Source0:	ftp://ftp.xs4all.nl/pub/crypto/%{name}/development/%{name}-%{version}.tar.gz
+# Source0-md5:	9bf0c0f9aaf79b93cced4f3ab545129c
 Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-pl-man-pages.tar.bz2
 # Source1-md5:	6bd0b509015a2795cfb895aaab0bbc55
 Source2:	http://www.strongsec.com/%{name}/%{x509ver}-%{name}-%{version}.tar.gz
