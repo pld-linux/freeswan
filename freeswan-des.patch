@@ -1,0 +1,12 @@
+diff -Nru freeswan-2.00-rc2.orig/programs/pluto/pem.c freeswan-2.00-rc2/programs/pluto/pem.c
+--- freeswan-2.00-rc2.orig/programs/pluto/pem.c	Thu Apr  3 21:36:36 2003
++++ freeswan-2.00-rc2/programs/pluto/pem.c	Thu Apr  3 21:37:15 2003
+@@ -25,7 +25,7 @@
+ 
+ #include <freeswan.h>
+ #define HEADER_DES_LOCL_H   /* stupid trick to force prototype decl in <des.h> */
+-#include <des.h>
++#include <crypto/des.h>
+ 
+ #include "constants.h"
+ #include "defs.h"
