@@ -1,47 +1,39 @@
-diff -durN freeswan-1.3.orig/Makefile freeswan-1.3/Makefile
---- freeswan-1.3.orig/Makefile	Tue Feb  8 22:22:28 2000
-+++ freeswan-1.3/Makefile	Tue Apr 25 11:44:45 2000
-@@ -16,21 +16,17 @@
- # public and private command directories
- # Beware, many things define PATH settings which are assumed to include
- # PUBDIR (or at least, to include *some* copy of the "ipsec" command).
--PUBDIR=/usr/local/sbin
-+PUBDIR=/usr/sbin
- # PRIVDIR is where things get put, FINALPRIVDIR is where they think they
- # will be put (currently only used by utils/ipsec)
--PRIVDIR=/usr/local/lib/ipsec
--FINALPRIVDIR=/usr/local/lib/ipsec
-+PRIVDIR=/usr/lib/ipsec
-+FINALPRIVDIR=/usr/lib/ipsec
+diff -durN freeswan-1.4.orig/Makefile freeswan-1.4/Makefile
+--- freeswan-1.4.orig/Makefile	Mon May 22 06:37:52 2000
++++ freeswan-1.4/Makefile	Sat Jun 10 13:26:12 2000
+@@ -17,24 +17,20 @@
+ # PUBDIR is where the "ipsec" command goes; beware, many things define PATH
+ # settings which are assumed to include it (or at least, to include *some*
+ # copy of the "ipsec" command).
+-PUBDIR=$(DESTDIR)/usr/local/sbin
++PUBDIR=$(DESTDIR)/usr/sbin
+ # PRIVDIR is where commands get put, REALPRIVDIR is where they think they
+ # will be run from in the end (currently only used by utils/ipsec)
+-REALPRIVDIR=/usr/local/lib/ipsec
++REALPRIVDIR=/usr/lib/ipsec
+ PRIVDIR=$(DESTDIR)$(REALPRIVDIR)
  # where manpages go
--MANTREE=/usr/local/man
-+MANTREE=/usr/share/man
+-MANTREE=$(DESTDIR)/usr/local/man
++MANTREE=$(DESTDIR)/usr/share/man
  # all relevant manpage subdirectories
  MANPLACES=man3 man5 man8
- # where boot/shutdown scripts go (first one that exists gets it)
+ # where configuration files go
+-CONFDIR=$(DESTDIR)/etc
++CONFDIR=$(DESTDIR)/etc/freeswan
+ # REALRCDIR is where boot/shutdown scripts go (first RCDIRS that exists gets
+ # it); RCDIR is where they think they will ultimately be (for utils/Makefile)
 -RCDIRS=/etc/rc.d/init.d /etc/rc.d /etc/init.d /sbin/init.d
--RCDIR=$(shell for d in $(RCDIRS) ; \
+-REALRCDIR=$(shell for d in $(RCDIRS) ; \
 -		do if test -d $$d ; \
 -		then echo $$d ; exit 0 ; \
--		fi ; done ; echo /unknown )
-+RCDIR=/etc/rc.d/init.d
+-		fi ; done ; echo /etc/rc.d/init.d )
++REALRCDIR=/etc/rc.d/init.d
+ RCDIR=$(DESTDIR)$(REALRCDIR)
  
  # kernel location, and location of kernel patches in the distribution
- KERNELSRC=/usr/src/linux
-@@ -205,8 +201,8 @@
- SETTINGS=BINDIR=$(PRIVDIR) PUBDIR=$(PUBDIR) PRIVDIR=$(PRIVDIR) \
- 	FINALPRIVDIR=$(FINALPRIVDIR) MANTREE=$(MANTREE) INSTALL="$(INSTALL)"
- install:
--	mkdir -p $(PRIVDIR) $(PUBDIR)
--	for m in $(MANPLACES) ; do mkdir -p $(MANTREE)/$$m ; done
-+	mkdir -p $(DESTDIR)$(PRIVDIR) $(DESTDIR)$(PUBDIR)
-+	for m in $(MANPLACES) ; do mkdir -p $(DESTDIR)$(MANTREE)/$$m ; done
- 	cd lib ; $(MAKE) install $(SETTINGS)
- 	cd klips/utils ; $(MAKE) install $(SETTINGS)
- 	cd pluto ; $(MAKE) install $(SETTINGS)
-diff -durN freeswan-1.3.orig/klips/utils/Makefile freeswan-1.3/klips/utils/Makefile
---- freeswan-1.3.orig/klips/utils/Makefile	Tue Feb  8 22:22:06 2000
-+++ freeswan-1.3/klips/utils/Makefile	Tue Apr 25 11:44:45 2000
+diff -durN freeswan-1.4.orig/klips/utils/Makefile freeswan-1.4/klips/utils/Makefile
+--- freeswan-1.4.orig/klips/utils/Makefile	Mon May 22 06:37:31 2000
++++ freeswan-1.4/klips/utils/Makefile	Sat Jun 10 13:26:39 2000
 @@ -14,7 +14,7 @@
  # RCSID $Id$
  
@@ -62,21 +54,9 @@ diff -durN freeswan-1.3.orig/klips/utils/Makefile freeswan-1.3/klips/utils/Makef
  MANDIR=$(MANTREE)/man8
  FREESWANLIB=../../lib/libfreeswan.a
  INSTALL=install
-@@ -39,9 +39,9 @@
- all: $(ALL)
- 
- install: $(ALL)
--	$(INSTALL) $(ALL) $(BINDIR)
-+	$(INSTALL) $(ALL) $(DESTDIR)$(BINDIR)
- 	for f in $(addsuffix .8, $(ALL)) ; do \
--		$(INSTALL) $$f $(MANDIR)/ipsec_$$f || exit 1 ; done
-+		$(INSTALL) $$f $(DESTDIR)$(MANDIR)/ipsec_$$f || exit 1 ; done
- 
- spi: spi.o
- 	$(CC) $(DFLAGS) -o $@ $? $(FREESWANLIB)
-diff -durN freeswan-1.3.orig/lib/Makefile freeswan-1.3/lib/Makefile
---- freeswan-1.3.orig/lib/Makefile	Tue Feb  8 22:22:09 2000
-+++ freeswan-1.3/lib/Makefile	Tue Apr 25 11:44:45 2000
+diff -durN freeswan-1.4.orig/lib/Makefile freeswan-1.4/lib/Makefile
+--- freeswan-1.4.orig/lib/Makefile	Mon May 22 06:37:32 2000
++++ freeswan-1.4/lib/Makefile	Sat Jun 10 13:26:12 2000
 @@ -19,9 +19,9 @@
  HDRS=freeswan.h internal.h
  LIB=libfreeswan.a
@@ -117,9 +97,9 @@ diff -durN freeswan-1.3.orig/lib/Makefile freeswan-1.3/lib/Makefile
  	done
  
  $(LIB):	$(OBJS)
-diff -durN freeswan-1.3.orig/libdes/Makefile freeswan-1.3/libdes/Makefile
---- freeswan-1.3.orig/libdes/Makefile	Thu Nov 25 18:04:25 1999
-+++ freeswan-1.3/libdes/Makefile	Tue Apr 25 11:44:45 2000
+diff -durN freeswan-1.4.orig/libdes/Makefile freeswan-1.4/libdes/Makefile
+--- freeswan-1.4.orig/libdes/Makefile	Thu Nov 25 18:04:25 1999
++++ freeswan-1.4/libdes/Makefile	Sat Jun 10 13:26:12 2000
 @@ -46,7 +46,7 @@
  
  CC=gcc
@@ -171,9 +151,9 @@ diff -durN freeswan-1.3.orig/libdes/Makefile freeswan-1.3/libdes/Makefile
 +	    cp des.h $(DESTDIR)$(INCDIR)/des.h; \
  	fi
  # DO NOT DELETE THIS LINE -- make depend depends on it.
-diff -durN freeswan-1.3.orig/pluto/Makefile freeswan-1.3/pluto/Makefile
---- freeswan-1.3.orig/pluto/Makefile	Fri Dec 17 03:42:19 1999
-+++ freeswan-1.3/pluto/Makefile	Tue Apr 25 11:45:57 2000
+diff -durN freeswan-1.4.orig/pluto/Makefile freeswan-1.4/pluto/Makefile
+--- freeswan-1.4.orig/pluto/Makefile	Mon May 22 06:37:44 2000
++++ freeswan-1.4/pluto/Makefile	Sat Jun 10 13:26:12 2000
 @@ -19,10 +19,10 @@
  CC = gcc
  
@@ -199,34 +179,23 @@ diff -durN freeswan-1.3.orig/pluto/Makefile freeswan-1.3/pluto/Makefile
 @@ -74,7 +74,7 @@
  
  CPPFLAGS = $(HDRDIRS) $(BYTE_ORDER) \
- 	-DPLUTO -DKLIPS -DROAD_WARRIOR_FUDGE -DDODGE_DH_MISSING_ZERO_BUG \
+ 	-DPLUTO -DKLIPS -DDODGE_DH_MISSING_ZERO_BUG -DOLD_RESOLVER \
 -	-DDEBUG -DGCC_LINT
 +	-DDEBUG -DGCC_LINT -DSHARED_SECRETS_FILE='"/etc/freeswan/ipsec.secrets"'
  
  ALLFLAGS = $(CPPFLAGS) $(CFLAGS)
  
-@@ -142,21 +142,21 @@
+@@ -143,7 +143,7 @@
  OBJSPLUTO = connections.o constants.o cookie.o crypto.o defs.o log.o \
  	state.o main.o server.o timer.o id.o ipsec_doi.o kernel.o \
- 	kernel_comm.o demux.o packet.o preshared.o rnd.o spdb.o \
+ 	kernel_comm.o demux.o packet.o preshared.o dnskey.o rnd.o spdb.o \
 -	sha1.o md5.o $(OBJSGCRYPT) $(LIBDESLITE) $(LIBGMP) $(FREESWANLIB)
 +	sha1.o md5.o $(OBJSGCRYPT) $(LIBDESLITE) $(FREESWANLIB)
  
  OBJSWHACK = whack.o $(FREESWANLIB)
  
- all: $(BINNAMEPLUTO) $(BINNAMEWHACK)
- 
- install: all
--	$(INSTALL) $(BINNAMEPLUTO) $(BINNAMEWHACK) $(BINDIR)
--	$(INSTALL) pluto.8 $(PMANDIR)/ipsec_pluto.8
--	../utils/manlink $(PMANDIR) ipsec_pluto.8
--	$(INSTALL) ipsec.secrets.5 $(FMANDIR)
--	../utils/manlink $(FMANDIR) ipsec.secrets.5
-+	$(INSTALL) $(BINNAMEPLUTO) $(BINNAMEWHACK) $(DESTDIR)$(BINDIR)
-+	$(INSTALL) pluto.8 $(DESTDIR)$(PMANDIR)/ipsec_pluto.8
-+	../utils/manlink $(DESTDIR)$(PMANDIR) ipsec_pluto.8
-+	$(INSTALL) ipsec.secrets.5 $(DESTDIR)$(FMANDIR)
-+	../utils/manlink $(DESTDIR)$(FMANDIR) ipsec.secrets.5
+@@ -157,7 +157,7 @@
+ 	../utils/manlink $(FMANDIR) ipsec.secrets.5
  
  $(BINNAMEPLUTO): $(OBJSPLUTO)
 -	$(CC) -o $(BINNAMEPLUTO) $(LDFLAGS) $(OBJSPLUTO) $(LIBSPLUTO)
@@ -234,20 +203,21 @@ diff -durN freeswan-1.3.orig/pluto/Makefile freeswan-1.3/pluto/Makefile
  
  $(BINNAMEWHACK): $(OBJSWHACK)
  	$(CC) -o $(BINNAMEWHACK) $(OBJSWHACK) $(LIBSWHACK)
-diff -durN freeswan-1.3.orig/utils/Makefile freeswan-1.3/utils/Makefile
---- freeswan-1.3.orig/utils/Makefile	Tue Feb  8 22:22:30 2000
-+++ freeswan-1.3/utils/Makefile	Tue Apr 25 11:44:45 2000
-@@ -14,12 +14,12 @@
+diff -durN freeswan-1.4.orig/utils/Makefile freeswan-1.4/utils/Makefile
+--- freeswan-1.4.orig/utils/Makefile	Mon May 22 06:37:54 2000
++++ freeswan-1.4/utils/Makefile	Sat Jun 10 13:26:12 2000
+@@ -14,13 +14,13 @@
  # RCSID $Id$
  
  # pathnames, subject to overrides from main Makefile
 -PUBDIR=/usr/local/sbin
 -PRIVDIR=/usr/local/lib/ipsec
--FINALPRIVDIR=/usr/local/lib/ipsec
+-REALPRIVDIR=/usr/local/lib/ipsec
 +PUBDIR=/usr/sbin
 +PRIVDIR=/usr/lib/ipsec
-+FINALPRIVDIR=/usr/lib/ipsec
++REALPRIVDIR=/usr/lib/ipsec
  RCDIR=/etc/rc.d/init.d
+ REALRCDIR=/etc/rc.d/init.d
 -CONFDIR=/etc
 -MANTREE=/usr/local/man
 +CONFDIR=/etc/freeswan
@@ -255,7 +225,7 @@ diff -durN freeswan-1.3.orig/utils/Makefile freeswan-1.3/utils/Makefile
  
  FMANDIR=$(MANTREE)/man5
  CMANDIR=$(MANTREE)/man8
-@@ -50,7 +50,7 @@
+@@ -53,7 +53,7 @@
  	$(CC) $(CFLAGS) ranbits.o $(LIB) -o $@
  
  rsasigkey:	rsasigkey.o
@@ -264,56 +234,3 @@ diff -durN freeswan-1.3.orig/utils/Makefile freeswan-1.3/utils/Makefile
  
  man_xref:	man_xref.o
  	$(CC) $(CFLAGS) man_xref.o $(LIB) -o $@
-@@ -80,38 +80,24 @@
- 	./randomize conf.proto | egrep -v RCSI >$@
- 
- install:	$(PUBS) $(PRIVS) $(MANS) $(GENDFILES)
--	mkdir -p $(PUBDIR) $(PRIVDIR) $(FMANDIR) $(CMANDIR)
--	$(INSTALL) $(PUBS) $(PUBDIR)
--	$(INSTALL) $(PRIVS) $(PRIVDIR)
--	$(INSTALL) $(PUB) ipsec.conf.5 $(FMANDIR)
--	$(INSTALL) $(PUB) $(PLAIN_MANS) $(CMANDIR)
-+	mkdir -p $(DESTDIR)$(PUBDIR) $(DESTDIR)$(PRIVDIR) $(DESTDIR)$(FMANDIR) $(DESTDIR)$(CMANDIR)
-+	$(INSTALL) $(PUBS) $(DESTDIR)$(PUBDIR)
-+	$(INSTALL) $(PRIVS) $(DESTDIR)$(PRIVDIR)
-+	$(INSTALL) $(PUB) ipsec.conf.5 $(DESTDIR)$(FMANDIR)
-+	$(INSTALL) $(PUB) $(PLAIN_MANS) $(DESTDIR)$(CMANDIR)
- 	for f in $(IPSEC_CMANS) ; \
- 	do \
--		$(INSTALL) $(PUB) $$f $(CMANDIR)/ipsec_$$f || exit 1 ; \
--		./manlink $(CMANDIR) ipsec_$$f ; \
-+		$(INSTALL) $(PUB) $$f $(DESTDIR)$(CMANDIR)/ipsec_$$f || exit 1 ; \
-+		./manlink $(DESTDIR)$(CMANDIR) ipsec_$$f ; \
- 	done
--	test -f $(CONFDIR)/ipsec.secrets || \
--		$(INSTALL) $(PRIV) secrets.eg $(CONFDIR)/ipsec.secrets
--	test -f $(CONFDIR)/ipsec.conf || \
--		$(INSTALL) $(PUB) conf.eg $(CONFDIR)/ipsec.conf
-+	test -f $(DESTDIR)$(CONFDIR)/ipsec.secrets || \
-+		$(INSTALL) $(PRIV) secrets.eg $(DESTDIR)$(CONFDIR)/ipsec.secrets
-+	test -f $(DESTDIR)$(CONFDIR)/ipsec.conf || \
-+		$(INSTALL) $(PUB) conf.eg $(DESTDIR)$(CONFDIR)/ipsec.conf
- 	# main copy must go in RCDIR, PRIVDIR may not be mounted at boot time
--	$(INSTALL) setup $(RCDIR)/ipsec
--	rm -f $(PRIVDIR)/setup
--	ln -s $(RCDIR)/ipsec $(PRIVDIR)/setup
--	if which chkconfig >/dev/null 2>&1 ; \
--	then chkconfig --add ipsec ; \
--	else $(MAKE) setup4 ; \
--	fi
--
--setup4:	$(RCDIR)/ipsec
--	# fallback rc install -- on in run states 2345, off in 016
--	-cd $(RCDIR)/../rc0.d ; ln -s ../init.d/ipsec K35ipsec
--	-cd $(RCDIR)/../rc1.d ; ln -s ../init.d/ipsec K35ipsec
--	-cd $(RCDIR)/../rc2.d ; ln -s ../init.d/ipsec S35ipsec
--	-cd $(RCDIR)/../rc3.d ; ln -s ../init.d/ipsec S35ipsec
--	-cd $(RCDIR)/../rc4.d ; ln -s ../init.d/ipsec S35ipsec
--	-cd $(RCDIR)/../rc5.d ; ln -s ../init.d/ipsec S35ipsec
--	-cd $(RCDIR)/../rc6.d ; ln -s ../init.d/ipsec K35ipsec
-+	$(INSTALL) setup $(DESTDIR)$(RCDIR)/ipsec
-+	rm -f $(DESTDIR)$(PRIVDIR)/setup
-+	ln -s $(RCDIR)/ipsec $(DESTDIR)$(PRIVDIR)/setup
- 
- clean:
- 	rm -f *.o $(BINS) $(GENDFILES) $(LOCALS)

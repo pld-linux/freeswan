@@ -1,6 +1,6 @@
-diff -durN freeswan-1.3.orig/utils/setup freeswan-1.3/utils/setup
---- freeswan-1.3.orig/utils/setup	Tue Feb  8 22:22:32 2000
-+++ freeswan-1.3/utils/setup	Tue Apr 25 12:17:30 2000
+diff -durN freeswan-1.4.orig/utils/setup freeswan-1.4/utils/setup
+--- freeswan-1.4.orig/utils/setup	Mon May 22 06:37:57 2000
++++ freeswan-1.4/utils/setup	Sat Jun 10 13:07:02 2000
 @@ -37,6 +37,8 @@
  	export PATH
  fi
@@ -10,55 +10,55 @@ diff -durN freeswan-1.3.orig/utils/setup freeswan-1.3/utils/setup
  me='ipsec setup'		# for messages
  
  # make sure output of (e.g.) ifconfig is in English
-@@ -376,7 +378,7 @@
+@@ -368,7 +370,7 @@
  # logging control
  logit() {
  	IPSECsyslog=${IPSECsyslog-daemon.error}
 -	logger -s -p $IPSECsyslog -t ipsec_setup 2>&1
 +	logger -p $IPSECsyslog -t ipsec_setup 2>&1
  }
- 
- 
-@@ -395,12 +397,14 @@
+ logonly() {
+ 	IPSECsyslog=${IPSECsyslog-daemon.error}
+@@ -391,12 +393,14 @@
  	# Start things rolling.
  	# (Warning, changes to this log message may affect barf.)
  	version="`ipsec --version | awk 'NR == 1 { print $3 }'`"
-+	show "Starting FreeS/WAN IPSEC"; busy
++ 	show "Starting FreeS/WAN IPSEC"; busy
  	echo "Starting FreeS/WAN IPSEC $version..." | logit
- 	rm -f $nexthop $info
+ 	rm -f $info
  	if test ! -r /dev/random
  	then
  		echo "...unable to start FreeS/WAN IPSEC, no /dev/random!" |
  									logit
-+		deltext; fail
++ 		deltext; fail
  		exit 1
  	fi
  	startklips 2>&1 | logit
-@@ -426,10 +430,12 @@
- 		plutogo 2>&1 | logit
- 	fi
- 	echo "...FreeS/WAN IPSEC started" | logit
-+	deltext; ok
+@@ -434,10 +438,12 @@
+ 	fore)	plutogo 2>&1 | logit	;;
+ 	esac
+ 	echo "...FreeS/WAN IPSEC started" | logonly
++ 	deltext; ok
  	;;
  
    stop|--stop)
  	# Shut things down.
-+	show "Stopping FreeS/WAN IPSEC" ; busy
++ 	show "Stopping FreeS/WAN IPSEC" ; busy
  	echo "Stopping FreeS/WAN IPSEC..." | logit
  	if test " $IPSECforwardcontrol" = " yes"
  	then
-@@ -480,8 +486,14 @@
+@@ -485,8 +491,14 @@
  	fi
- 	rm -f $nexthop $info
- 	echo "...FreeS/WAN IPSEC stopped" | logit
-+	deltext; ok
+ 	rm -f $info
+ 	echo "...FreeS/WAN IPSEC stopped" | logonly
++ 	deltext; ok
  	;;
  
 +  status|--status)
-+	status pluto
-+	ipsec look
-+	;;
-+	
++ 	status pluto
++ 	ipsec look
++ 	;;
++ 	
    restart|--restart)
  	$0 stop
  	$0 start
