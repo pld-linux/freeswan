@@ -19,8 +19,8 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
 The basic idea of IPSEC is to provide security functions
-([60]authentication and [61]encryption) at the IP (Internet Protocol)
-level. It will be required in [62]IP version 6 (better known as IPng,
+(authentication and encryption) at the IP (Internet Protocol)
+level. It will be required in IP version 6 (better known as IPng,
 the next generation) and is optional for the current IP, version 4.
 
 FreeS/WAN is a freely-distributable implementation of IPSEC protocol.
