@@ -1,0 +1,11 @@
+--- freeswan-2.00-rc2/programs/showhostkey/showhostkey.in.fix	Mon Mar 24 19:20:20 2003
++++ freeswan-2.00-rc2/programs/showhostkey/showhostkey.in	Mon Mar 24 19:20:46 2003
+@@ -17,7 +17,7 @@
+ me="ipsec showhostkey"
+ usage="Usage: $me [--file secrets] [--left] [--right] [--txt gateway] [--id id]"
+ 
+-file=/etc/ipsec.secrets
++file=/etc/ipsec/ipsec.secrets
+ fmt="dns"
+ gw=
+ id=
