@@ -1,9 +1,10 @@
 # Conditional builds
 # _without_x509		- without x509 support
-# _without_dist_kernel	- without distribution kernel
+# _without_dist_kernel	- without sources of distribution kernel
 # _without_NAT		- without NAT-Traversal
 # _without_25x	- without FreeS/WAN's keying daemon to work with 
 #			  the 2.5 kernel IPsec implementation
+# _without_modules      - build only library+programs, no kernel modules
 %define x509ver		x509-1.3.6
 %define nat_tr_ver	0.6
 %define _25x_ver	20030705
@@ -11,7 +12,8 @@ Summary:	Free IPSEC implemetation
 Summary(pl):	Publicznie dostêpna implementacja IPSEC
 Name:		freeswan
 Version:	2.01
-Release:	0.1
+%define _rel    0.2
+Release:        %{_rel}
 License:	GPL
 Group:		Networking/Daemons
 Source0:	ftp://ftp.xs4all.nl/pub/crypto/%{name}/%{name}-%{version}.tar.gz
@@ -32,8 +34,9 @@ BuildRequires:	gmp-devel
 Prereq:		/sbin/chkconfig
 Prereq:		rc-scripts
 Requires:	gawk
-Requires: 	gmp
-%{!?_without_dist_kernel:Requires:	kernel(freeswan) = %{version}}
+Requires:       gmp
+%{!?_without_dist_kernel:BuildRequires: kernel-headers}
+%{!?_without_dist_kernel:%{!?_without_modules:BuildRequires:    kernel-source}}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define x509 1
@@ -56,53 +59,52 @@ opcjonalny dla aktualnego IP, w wersji 4.
 
 FreeS/WAN jest darmow± implementacj± protoko³u IPSEC.
 
+%package -n kernel-net-ipsec
+Summary:        Kernel module for Linux IPSEC
+Summary(pl):    Modu³ j±dra dla IPSEC
+Release:        %{_rel}@%{_kernel_ver_str}
+Group:          Base/Kernel
+%{!?_without_dist_kernel:%requires_releq_kernel_up}
+PreReq:         modutils >= 2.4.6-4
+Requires(post,postun):  /sbin/depmod
+Requires:       %{name} = %{version}
+Conflicts:      kernel <= 2.4.20-9
+
+%description -n kernel-net-ipsec
+Kernel module for FreeS/WAN
+
+%description -n kernel-net-ipsec -l pl
+Modu³ j±dra wykorzystywany przez FreeS/WAN
+
 %prep
-%setup  -q -a2 -n %{name}-%{version}
+%setup  -q -a2 -a3 -n %{name}-%{version}
 %patch0 -p1
 %patch1 -p1
-%{?!_without_x509:patch -p1 <%{x509ver}-%{name}-%{version}/freeswan.diff}
+%{?!_without_x509:patch -p1 <%{x509ver}-%{name}-2.00/freeswan.diff}
 #%patch2 -p1
 %patch3 -p1
-%{?!_without_NAT:patch -p1 <NAT-Traversal-%{nat_tr_ver}/} 
+%{?!_without_NAT:patch -p1 <NAT-Traversal-0.6/NAT-Traversal-0.6-freeswan-2.00-x509-1.3.5.diff} 
 %{?!_without_25x:%patch4 -p1}
 
-#prep to build kernel module
-install -d kernelsrc/{include/{linux,net},Documentation,net,net/ipv4,scripts}
-for i in alpha arm cris i386 ia64 m68k mips mips64 parisc ppc ppc64 s390 \
-	s390x sh sparc sparc64 x86_64; do
-   install -d kernelsrc/arch/$i
-   install /usr/src/linux/arch/$i/{defconfig,Makefile,config.in} kernelsrc/arch/$i
-done
-install /usr/src/linux/{.config,Makefile,Rules.make} kernelsrc
-install /usr/src/linux/Documentation/Configure.help kernelsrc/Documentation
-install /usr/src/linux/include/linux/{version,autoconf,config,modversions,\
-types,socket,ip,netdevice,proc_fs,inetdevice,in_route}.h kernelsrc/include/linux
-#install /usr/src/linux/include/linux/*.h kernelsrc/include/linux
-install /usr/src/linux/include/net/{ip,arp,snmp,sock,route,dst,inetpeer,\
-neighbour,if_inet6,protocol,x25,ipx,dn,datalink}.h kernelsrc/include/net
-#install /usr/src/linux/include/net/*.h kernelsrc/include/net
-install /usr/src/linux/net/{Config.in,Makefile} kernelsrc/net
-install /usr/src/linux/net/ipv4/af_inet.c kernelsrc/net/ipv4
-install /usr/src/linux/scripts/{Configure,pathdown.sh} kernelsrc/scripts
-
 %build
+install -d kernelsrc
+lndir /usr/src/linux kernelsrc
+rm -rf kernelsrc/include/asm
+
 USERCOMPILE="%{rpmcflags}" ; export USERCOMPILE
 OPT_FLAGS="%{rpmcflags}"; export OPT_FLAGS
 CC=%{__cc}; export CC
 
-#%{__make} oldmod \
-#	KERNELSRC=kernelsrc
-
-
-%{__make} precheck verset kpatch ocf confcheck programs module \
-	KERNELSRC="`pwd`/kernelsrc"
+%{__make} precheck verset kpatch ocf confcheck programs module\
+	BIND9STATICLIBDIR=%{_libdir} \
 	FINALCONFDIR=%{_sysconfdir}/ipsec \
 	FINALCONFFILE=%{_sysconfdir}/ipsec/ipsec.conf \
 	INC_USRLOCAL=/usr \
 	INC_MANDIR=share/man \
 	FINALRCDIR=%{_sysconfdir}/rc.d/init.d \
-	BIND9STATICLIBDIR=%{_libdir} \
-	FINALLIBEXECDIR=%{_libdir}/ipsec 
+	FINALLIBEXECDIR=%{_libdir}/ipsec \
+        KERNELSRC="`pwd`/kernelsrc" \
+
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -110,26 +112,32 @@ install -d $RPM_BUILD_ROOT{%{_sysconfdir}/ipsec,/etc/rc.d/init.d,/var/run/pluto}
 
 %{__make} install \
 	BIND9STATICLIBDIR=%{_libdir} \
-	DESTDIR=$RPM_BUILD_ROOT \
+	DESTDIR="$RPM_BUILD_ROOT" \
         FINALCONFDIR=%{_sysconfdir}/ipsec \
 	FINALCONFFILE=%{_sysconfdir}/ipsec/ipsec.conf \
+	FINALRCDIR=%{_sysconfdir}/rc.d/init.d \
 	FINALLIBEXECDIR=%{_libdir}/ipsec \
 	FINALEXAMPLECONFDIR=/usr/share/doc/%{name}-%{version} \
-	FINALRCDIR=%{_sysconfdir}/rc.d/init.d \
-        INC_MANDIR=share/man \
-	INC_USRLOCAL=/usr
+        INC_USRLOCAL=/usr \
+        INC_MANDIR=share/man
+
 
 %if %{x509}
- install -d  $RPM_BUILD_ROOT%{_sysconfdir}/ipsec/ipsec.d
+ install -d  $RPM_BUILD_ROOT%{_sysconfdir}/ipsec/ipsec.d 
  for i in crls cacerts private policies; do
- 	install -d  $RPM_BUILD_ROOT%{_sysconfdir}/ipsec/ipsec.d/$i
-done
-for i in CHANGES README; do
+	install -d  $RPM_BUILD_ROOT%{_sysconfdir}/ipsec/ipsec.d/$i
+ done
+ for i in CHANGES README; do
 	install  %{x509ver}-%{name}-%{version}/$i $i.x509 ;	
-done
+ done
 %endif
 
 bzip2 -dc %{SOURCE1} | tar xf - -C $RPM_BUILD_ROOT%{_mandir}
+
+%if 0%{!?_without_modules:1}
+install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc
+install linux/net/ipsec/ipsec.o $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc
+%endif
 
 %post
 # generate RSA private key... if, and only if, /etc/ipsec/ipsec.secrets does
@@ -156,6 +164,12 @@ if [ "$1" = "0" ]; then
         /sbin/chkconfig --del ipsec >&2
 fi
 
+%post   -n kernel-net-ipsec
+/sbin/depmod -a %{!?_without_dist_kernel:-F /boot/System.map-%{_kernel_ver} }%{_kernel_ver}
+
+%postun -n kernel-net-ipsec
+/sbin/depmod -a %{!?_without_dist_kernel:-F /boot/System.map-%{_kernel_ver} }%{_kernel_ver}
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -180,4 +194,10 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0700,root,root) %dir %{_sysconfdir}/ipsec/ipsec.d/private
 %attr(0700,root,root) %dir %{_sysconfdir}/ipsec/ipsec.d/policies
 %attr(640,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/ipsec/ipsec.d/policies/*
+%endif
+
+%if 0%{!?_without_modules:1}
+%files -n kernel-net-ipsec
+%defattr(644,root,root,755)
+/lib/modules/%{_kernel_ver}/*/ipsec*
 %endif
