@@ -5,7 +5,7 @@
 # _without_25x	- without FreeS/WAN's keying daemon to work with 
 #			  the 2.5 kernel IPsec implementation
 # _without_modules      - build only library+programs, no kernel modules
-%define x509ver		x509-1.3.6
+%define x509ver		x509-1.4.1
 %define nat_tr_ver	0.6
 %define _25x_ver	20030705
 Summary:	Free IPSEC implemetation
@@ -20,8 +20,8 @@ Source0:	ftp://ftp.xs4all.nl/pub/crypto/%{name}/%{name}-%{version}.tar.gz
 # Source0-md5:	0a5bdc7b93879c77de295fd75d704b4a
 Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-pl-man-pages.tar.bz2
 # Source1-md5:	6bd0b509015a2795cfb895aaab0bbc55
-Source2:	http://www.strongsec.com/%{name}/%{x509ver}-%{name}-2.00.tar.gz
-# Source2-md5:	e8d609f46cb2c902ab319cc2812086b1
+Source2:	http://www.strongsec.com/%{name}/%{x509ver}-%{name}-2.01.tar.gz
+# Source2-md5:	5a76bed78f6aaf18d1509520ab7936fc
 Source3:	http://open-source.arkoon.net/freeswan/NAT-Traversal-%{nat_tr_ver}.tar.gz
 # Source3-md5:	6858a8535aa2611769d17e86e6735db2
 Patch0:		%{name}-showhostkey.patch
@@ -100,7 +100,7 @@ Modu³ j±dra SMP wykorzystywany przez FreeS/WAN
 %setup  -q -a2 -a3 -n %{name}-%{version}
 %patch0 -p1
 %patch1 -p1
-%{?!_without_x509:patch -p1 -s <%{x509ver}-%{name}-2.00/freeswan.diff}
+%{?!_without_x509:patch -p1 -s <%{x509ver}-%{name}-2.01/freeswan.diff}
 #%patch2 -p1
 %patch3 -p1
 %{?!_without_NAT:patch -p1 -s <NAT-Traversal-%{nat_tr_ver}/NAT-Traversal-%{nat_tr_ver}-freeswan-2.00-x509-1.3.5.diff} 
