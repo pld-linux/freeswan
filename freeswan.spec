@@ -2,7 +2,7 @@ Summary:	Free IPSEC implemetation
 Summary(pl):	Publicznie dostêpna implementacja IPSEC
 Name:		freeswan
 Version:	1.8
-Release:	2
+Release:	3
 License:	GPL
 Group:		Networking/Daemons
 Group(cs):	Sí»ové/Démoni
@@ -10,7 +10,7 @@ Group(da):	Netværks/Dæmoner
 Group(de):	Netzwerkwesen/Server
 Group(es):	Red/Servidores
 Group(fr):	Réseau/Serveurs
-Group(is):	Verkfræði/Púkar
+Group(is):	Net/Púkar
 Group(it):	Rete/Demoni
 Group(no):	Nettverks/Daemoner
 Group(pl):	Sieciowe/Serwery
