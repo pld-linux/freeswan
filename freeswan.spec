@@ -2,7 +2,7 @@
 # _without_x509		- without x509 support
 # _without_dist_kernel	- without sources of distribution kernel
 # _with_NAT		- without NAT-Traversal
-# _with_25x		- without FreeS/WAN's keying daemon to work with 
+# _with_25x		- without FreeS/WAN's keying daemon to work with
 #			  the 2.5 kernel IPsec implementation
 # _without_modules      - build only library+programs, no kernel modules
 %define x509ver		x509-1.4.1
@@ -102,7 +102,7 @@ Modu³ j±dra SMP wykorzystywany przez FreeS/WAN.
 %{?!_without_x509:patch -p1 -s <%{x509ver}-%{name}-%{version}/freeswan.diff}
 #%patch2 -p1
 %patch3 -p1
-%{?_with_NAT:patch -p1 -s <NAT-Traversal-%{nat_tr_ver}/NAT-Traversal-%{nat_tr_ver}-freeswan-2.00-x509-1.3.5.diff} 
+%{?_with_NAT:patch -p1 -s <NAT-Traversal-%{nat_tr_ver}/NAT-Traversal-%{nat_tr_ver}-freeswan-2.00-x509-1.3.5.diff}
 %{?_with_25x:gzip -d <%{SOURCE4}| patch -p1 -s}
 
 
@@ -224,12 +224,12 @@ install -d $RPM_BUILD_ROOT{%{_sysconfdir}/ipsec,/etc/rc.d/init.d,/var/run/pluto}
 
 
 %if 0%{!?_without_x509:1}
-  install -d  $RPM_BUILD_ROOT%{_sysconfdir}/ipsec/ipsec.d 
+  install -d  $RPM_BUILD_ROOT%{_sysconfdir}/ipsec/ipsec.d
   for i in crls cacerts private policies; do
 	install -d  $RPM_BUILD_ROOT%{_sysconfdir}/ipsec/ipsec.d/$i
   done
   for i in CHANGES README; do
-	install  %{x509ver}-%{name}-%{version}/$i $i.x509 ;	
+	install  %{x509ver}-%{name}-%{version}/$i $i.x509 ;
   done
 %endif
 
@@ -286,7 +286,7 @@ fi
 
 %files
 %defattr(644,root,root,755)
-%doc README CREDITS CHANGES BUGS 
+%doc README CREDITS CHANGES BUGS
 %doc doc/{kernel.notes,impl.notes,examples,prob.report,standards} doc/*.html
 %{?_with_NAT:%doc NAT-Traversal-%{nat_tr_ver}/README.NAT-Traversal}
 %{?!_without_x509:%doc CHANGES.x509 README.x509}
