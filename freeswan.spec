@@ -31,6 +31,7 @@ Patch3:		%{name}-confread.patch
 Patch4:		http://gondor.apana.org.au/~herbert/freeswan/2.00/freeswan-linux-ipsec-%{_25x_ver}.patch.gz
 URL:		http://www.freeswan.org/
 BuildRequires:	gmp-devel
+BuildRequires:	rpmbuild(macros) >= 1.118
 Prereq:		/sbin/chkconfig
 Prereq:		rc-scripts
 Requires:	gawk
@@ -191,10 +192,10 @@ if [ "$1" = "0" ]; then
 fi
 
 %post   -n kernel-net-ipsec
-/sbin/depmod -a %{!?_without_dist_kernel:-F /boot/System.map-%{_kernel_ver} }%{_kernel_ver}
+%depmod %{_kernel_ver}
 
 %postun -n kernel-net-ipsec
-/sbin/depmod -a %{!?_without_dist_kernel:-F /boot/System.map-%{_kernel_ver} }%{_kernel_ver}
+%depmod %{_kernel_ver}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
