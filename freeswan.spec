@@ -33,8 +33,8 @@ Patch3:		%{name}-confread.patch
 URL:		http://www.freeswan.org/
 BuildRequires:	gmp-devel
 BuildRequires:	rpmbuild(macros) >= 1.118
-Prereq:		/sbin/chkconfig
-Prereq:		rc-scripts
+PreReq:		rc-scripts
+Requires(post,preun):	/sbin/chkconfig
 Requires:	gawk
 Requires:       gmp
 %{!?_without_dist_kernel:%{!?_without_modules:BuildRequires:	kernel-headers}}
@@ -73,15 +73,14 @@ Requires:       %{name} = %{version}
 Conflicts:      kernel <= 2.4.20-9
 
 %description -n kernel-net-ipsec
-Kernel module for FreeS/WAN
+Kernel module for FreeS/WAN.
 
 %description -n kernel-net-ipsec -l pl
-Modu³ j±dra wykorzystywany przez FreeS/WAN
-
+Modu³ j±dra wykorzystywany przez FreeS/WAN.
 
 %package -n kernel-smp-net-ipsec
 Summary:        SMP kernel module for Linux IPSEC
-Summary(pl):    Modu³ j±dra dla IPSEC
+Summary(pl):    Modu³ j±dra SMP dla IPSEC
 Release:        %{_rel}@%{_kernel_ver_str}
 Group:          Base/Kernel
 %{!?_without_dist_kernel:%requires_releq_kernel_up}
@@ -91,11 +90,10 @@ Requires:       %{name} = %{version}
 Conflicts:      kernel-smp <= 2.4.20-9
 
 %description -n kernel-smp-net-ipsec
-SMP kernel module for FreeS/WAN
+SMP kernel module for FreeS/WAN.
 
 %description -n kernel-smp-net-ipsec -l pl
-Modu³ j±dra SMP wykorzystywany przez FreeS/WAN
-
+Modu³ j±dra SMP wykorzystywany przez FreeS/WAN.
 
 %prep
 %setup  -q -a2 -a3 -n %{name}-%{version}
@@ -246,6 +244,9 @@ bzip2 -dc %{SOURCE1} | tar xf - -C $RPM_BUILD_ROOT%{_mandir}
   %endif
 %endif
 
+%clean
+rm -rf $RPM_BUILD_ROOT
+
 %post
 # generate RSA private key... if, and only if, /etc/ipsec/ipsec.secrets does
 # not already exist
@@ -282,10 +283,6 @@ fi
 
 %postun -n kernel-smp-net-ipsec
 %depmod %{_kernel_ver}
-
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
