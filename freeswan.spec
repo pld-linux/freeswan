@@ -15,11 +15,11 @@ Version:	2.04
 Release:	%{_rel}
 License:	GPL
 Group:		Networking/Daemons
-Source0:	ftp://ftp.xs4all.nl/pub/crypto/%{name}/%{name}-%{version}.tar.gz
+Source0:	ftp://ftp.xs4all.nl/pub/crypto/freeswan/%{name}-%{version}.tar.gz
 # Source0-md5:	37a15f760ca43317fe7c5d6e6859689c
 Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-pl-man-pages.tar.bz2
 # Source1-md5:	6bd0b509015a2795cfb895aaab0bbc55
-Source2:	http://www.strongsec.com/%{name}/%{x509ver}-%{name}-%{version}.tar.gz
+Source2:	http://www.strongsec.com/freeswan/%{x509ver}-%{name}-%{version}.tar.gz
 # Source2-md5:	d5ff93ed3dc33afcc3ab5d00ca11008b
 Source3:	http://open-source.arkoon.net/freeswan/NAT-Traversal-%{nat_tr_ver}.tar.gz
 # Source3-md5:	6858a8535aa2611769d17e86e6735db2
@@ -30,30 +30,30 @@ Patch3:		%{name}-confread.patch
 URL:		http://www.freeswan.org/
 BuildRequires:	gmp-devel
 BuildRequires:	rpmbuild(macros) >= 1.118
-PreReq:		rc-scripts
+Requires:	rc-scripts
+%{?with_dist_kernel:%{?with_modules:BuildRequires:	kernel-doc}}
+%{?with_dist_kernel:%{?with_modules:BuildRequires:	kernel-headers}}
+%{?with_dist_kernel:%{?with_modules:BuildRequires:	kernel-source}}
 Requires(post,preun):	/sbin/chkconfig
 Requires:	gawk
 Requires:	gmp
-%{?with_dist_kernel:%{?with_modules:BuildRequires:	kernel-headers}}
-%{?with_dist_kernel:%{?with_modules:BuildRequires:	kernel-source}}
-%{?with_dist_kernel:%{?with_modules:BuildRequires:	kernel-doc}}
 # XFree86 is required to use usefull lndir
 %{?with_dist_kernel:%{?with_modules:BuildRequires:	XFree86}}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
-This package contains FreeS/WAN daemon and utilities.
-FreeS/WAN is a free implementation of the IPsec protocol for Linux.
-It allows to build secure tunnels through untrusted networks.
-The basic idea of IPsec is to provide security functions
-(authentication and encryption) at the IP (Internet Protocol) level.
+This package contains FreeS/WAN daemon and utilities. FreeS/WAN is a
+free implementation of the IPsec protocol for Linux. It allows to
+build secure tunnels through untrusted networks. The basic idea of
+IPsec is to provide security functions (authentication and encryption)
+at the IP (Internet Protocol) level.
 
 %description -l pl
-Ten pakiet zawiera demona i narzêdzia FreeS/WAN.
-FreeS/WAN jest woln± implementacj± protoko³u IPsec dla Linuksa.
-Umo¿liwia zestawianie bezpiecznych tuneli przez niezaufane sieci.
-Podstawowa idea IPsec to zapewnienie funkcji bezpieczeñstwa
-(autentykacji i szyfrowania) na poziomie IP.
+Ten pakiet zawiera demona i narzêdzia FreeS/WAN. FreeS/WAN jest woln±
+implementacj± protoko³u IPsec dla Linuksa. Umo¿liwia zestawianie
+bezpiecznych tuneli przez niezaufane sieci. Podstawowa idea IPsec to
+zapewnienie funkcji bezpieczeñstwa (autentykacji i szyfrowania) na
+poziomie IP.
 
 %package -n kernel-net-ipsec
 Summary:	Kernel module for Linux IPSEC
@@ -61,7 +61,7 @@ Summary(pl):	Modu³ j±dra dla IPSEC
 Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 %{?with_dist_kernel:%requires_releq_kernel_up}
-PreReq:		modutils >= 2.4.6-4
+Requires:	modutils >= 2.4.6-4
 Requires(post,postun):	/sbin/depmod
 Requires:	%{name} = %{version}
 Conflicts:	kernel <= 2.4.20-9
@@ -78,7 +78,7 @@ Summary(pl):	Modu³ j±dra SMP dla IPSEC
 Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 %{?with_dist_kernel:%requires_releq_kernel_up}
-PreReq:		modutils >= 2.4.6-4
+Requires:	modutils >= 2.4.6-4
 Requires(post,postun):	/sbin/depmod
 Requires:	%{name} = %{version}
 Conflicts:	kernel-smp <= 2.4.20-9
@@ -90,7 +90,7 @@ SMP kernel module for FreeS/WAN.
 Modu³ j±dra SMP wykorzystywany przez FreeS/WAN.
 
 %prep
-%setup -q -a2 -a3 
+%setup -q -a2 -a3
 %patch0 -p1
 %patch1 -p1
 %{?with_x509:patch -p1 -s <%{x509ver}-%{name}-%{version}/freeswan.diff}
@@ -286,15 +286,15 @@ fi
 %dir %{_libdir}/ipsec
 %attr(755,root,root) %{_libdir}/ipsec/*
 %attr(751,root,root) %dir %{_sysconfdir}/ipsec
-%attr(640,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/ipsec/ipsec.conf
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/ipsec/ipsec.conf
 %if %{with x509}
-%attr(0700,root,root) %dir %{_sysconfdir}/ipsec/ipsec.d
-%attr(0700,root,root) %dir %{_sysconfdir}/ipsec/ipsec.d/certs
-%attr(0700,root,root) %dir %{_sysconfdir}/ipsec/ipsec.d/crls
-%attr(0700,root,root) %dir %{_sysconfdir}/ipsec/ipsec.d/cacerts
-%attr(0700,root,root) %dir %{_sysconfdir}/ipsec/ipsec.d/private
-%attr(0700,root,root) %dir %{_sysconfdir}/ipsec/ipsec.d/policies
-%attr(640,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/ipsec/ipsec.d/policies/*
+%attr(700,root,root) %dir %{_sysconfdir}/ipsec/ipsec.d
+%attr(700,root,root) %dir %{_sysconfdir}/ipsec/ipsec.d/certs
+%attr(700,root,root) %dir %{_sysconfdir}/ipsec/ipsec.d/crls
+%attr(700,root,root) %dir %{_sysconfdir}/ipsec/ipsec.d/cacerts
+%attr(700,root,root) %dir %{_sysconfdir}/ipsec/ipsec.d/private
+%attr(700,root,root) %dir %{_sysconfdir}/ipsec/ipsec.d/policies
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/ipsec/ipsec.d/policies/*
 %endif
 
 %if %{with modules}
