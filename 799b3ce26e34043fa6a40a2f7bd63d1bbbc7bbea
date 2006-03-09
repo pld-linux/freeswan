@@ -1,0 +1,4 @@
+- fix %build ,%prep, %install  section
+- add config patch x509
+- relase 0.2
+- STBR -> test
