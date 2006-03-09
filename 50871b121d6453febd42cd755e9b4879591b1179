@@ -1,0 +1,5 @@
+- updated to 1.96
+- rel 6
+- remove freeswan-Makefiles.patch
+- add freeswan-Makefile.patch
+- modify freeswan-config.patch
