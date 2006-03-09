@@ -1,0 +1,3 @@
+- started update to 2.0.1,
+- added NAT-Tr and kernel 2.5.x support patchs,
+- started have idea how to produce kernel-freeswan module, time to sleep.
