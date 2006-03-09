@@ -1,0 +1,4 @@
+- release 2
+- fixed awk error ( replaced awk - default mawk, with gawk )
+- added Requires: gawk
+- fixed loading /etc/ipsec/ipsec.d/{cacerts,crls}
