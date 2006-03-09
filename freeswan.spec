@@ -129,7 +129,7 @@ Modu³ j±dra SMP wykorzystywany przez FreeS/WAN.
 
 USERCOMPILE="%{rpmcflags}" ; export USERCOMPILE
 OPT_FLAGS="%{rpmcflags}"; export OPT_FLAGS
-CC=%{__cc}; export CC
+CC="%{__cc}"; export CC
 
 
 %if %{with modules}
