@@ -1,0 +1,2 @@
+- move rsa keys generation proces  from %build to %post
+- rel++
