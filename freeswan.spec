@@ -11,7 +11,7 @@ Summary:	Free IPSEC implemetation
 Summary(pl):	Publicznie dostêpna implementacja IPSEC
 Name:		freeswan
 Version:	2.04
-%define _rel    0.1
+%define	_rel	0.1
 Release:	%{_rel}
 License:	GPL
 Group:		Networking/Daemons
@@ -98,33 +98,36 @@ Modu³ j±dra SMP wykorzystywany przez FreeS/WAN.
 %{?with_NAT:patch -p1 -s <NAT-Traversal-%{nat_tr_ver}/NAT-Traversal-%{nat_tr_ver}-freeswan-2.00-x509-1.3.5.diff}
 
 %build
-%define _kver `echo "%{_kernel_ver}" |awk -F. '{print $2}'`
+%define	_kver	`echo "%{_kernel_ver}" |awk -F. '{print $2}'`
+
 %if %{with modules}
-  install -d kernelsrc
-  lndir -silent %{_kernelsrcdir} kernelsrc
-  mv kernelsrc/.config kernelsrc/.config.old
-  cp kernelsrc/.config.old kernelsrc/.config
-  %if %{with dist_kernel}
-    rm -rf kernelsrc/include/asm
-    cd kernelsrc
-    patch -R -p1 <../linux/net/Makefile.fs2_%{_kver}.patch
-    patch -R -p1 <../linux/net/Config.in.fs2_%{_kver}.patch
-    patch -R -p1 <../linux/net/ipv4/af_inet.c.fs2_%{_kver}.patch
-    patch -R -p1 <../linux/Documentation/Configure.help.fs2_%{_kver}.patch
-    cd ..
-    rm -rf kernelsrc/{crypto,include/{freeswan,zlib,crypto},lib/{zlib,libfreeswan},net/ipsec}
-    rm kernelsrc/include/{freeswan,pfkey,pfkeyv2}.h
-    cp kernelsrc/config-up kernelsrc/.config
-  %endif
-  echo "CONFIG_IPSEC=m" >> kernelsrc/.config
-  echo "CONFIG_IPSEC_IPIP=y" >> kernelsrc/.config
-  echo "CONFIG_IPSEC_AH=y" >> kernelsrc/.config
-  echo "CONFIG_IPSEC_AUTH_HMAC_MD5=y" >> kernelsrc/.config
-  echo "CONFIG_IPSEC_AUTH_HMAC_SHA1=y" >> kernelsrc/.config
-  echo "CONFIG_IPSEC_ESP=y" >> kernelsrc/.config
-  echo "CONFIG_IPSEC_ENC_3DES=y" >> kernelsrc/.config
-  echo "CONFIG_IPSEC_IPCOMP=y" >> kernelsrc/.config
-  echo "CONFIG_IPSEC_DEBUG=y" >> kernelsrc/.config
+install -d kernelsrc
+lndir -silent %{_kernelsrcdir} kernelsrc
+mv kernelsrc/.config kernelsrc/.config.old
+cp kernelsrc/.config.old kernelsrc/.config
+
+%if %{with dist_kernel}
+rm -rf kernelsrc/include/asm
+cd kernelsrc
+patch -R -p1 <../linux/net/Makefile.fs2_%{_kver}.patch
+patch -R -p1 <../linux/net/Config.in.fs2_%{_kver}.patch
+patch -R -p1 <../linux/net/ipv4/af_inet.c.fs2_%{_kver}.patch
+patch -R -p1 <../linux/Documentation/Configure.help.fs2_%{_kver}.patch
+cd ..
+rm -rf kernelsrc/{crypto,include/{freeswan,zlib,crypto},lib/{zlib,libfreeswan},net/ipsec}
+rm kernelsrc/include/{freeswan,pfkey,pfkeyv2}.h
+cp kernelsrc/config-up kernelsrc/.config
+%endif
+
+echo "CONFIG_IPSEC=m" >> kernelsrc/.config
+echo "CONFIG_IPSEC_IPIP=y" >> kernelsrc/.config
+echo "CONFIG_IPSEC_AH=y" >> kernelsrc/.config
+echo "CONFIG_IPSEC_AUTH_HMAC_MD5=y" >> kernelsrc/.config
+echo "CONFIG_IPSEC_AUTH_HMAC_SHA1=y" >> kernelsrc/.config
+echo "CONFIG_IPSEC_ESP=y" >> kernelsrc/.config
+echo "CONFIG_IPSEC_ENC_3DES=y" >> kernelsrc/.config
+echo "CONFIG_IPSEC_IPCOMP=y" >> kernelsrc/.config
+echo "CONFIG_IPSEC_DEBUG=y" >> kernelsrc/.config
 %endif
 
 USERCOMPILE="%{rpmcflags}" ; export USERCOMPILE
@@ -133,7 +136,7 @@ CC="%{__cc}"; export CC
 
 
 %if %{with modules}
-  %{__make} precheck verset kpatch ocf confcheck module \
+%{__make} precheck verset kpatch ocf confcheck module \
 	BIND9STATICLIBDIR=%{_libdir} \
 	FINALCONFDIR=%{_sysconfdir}/ipsec \
 	FINALCONFFILE=%{_sysconfdir}/ipsec/ipsec.conf \
@@ -143,58 +146,59 @@ CC="%{__cc}"; export CC
 	FINALLIBEXECDIR=%{_libdir}/ipsec \
 	KERNELSRC="`pwd`/kernelsrc"
 
-  install linux/net/ipsec/ipsec.o .
+install linux/net/ipsec/ipsec.o .
 
-  %if %{with smp}
-    rm -rf kernelsrc
-    install -d kernelsrc
-    lndir -silent /usr/src/linux kernelsrc
-    mv kernelsrc/.config kernelsrc/.config.old
-    cp kernelsrc/.config.old kernelsrc/.config
-    %if %{with dist_kernel}
-      rm -rf kernelsrc/include/asm
-      cd kernelsrc
-      patch -R -p1 <../linux/net/Makefile.fs2_%{_kver}.patch
-      patch -R -p1 <../linux/net/Config.in.fs2_%{_kver}.patch
-      patch -R -p1 <../linux/net/ipv4/af_inet.c.fs2_%{_kver}.patch
-      patch -R -p1 <../linux/Documentation/Configure.help.fs2_%{_kver}.patch
-      cd ..
-      rm -rf kernelsrc/{crypto,include/{freeswan,zlib,crypto},lib/{zlib,libfreeswan},net/ipsec}
-      rm kernelsrc/include/{freeswan,pfkey,pfkeyv2}.h
-      cp kernelsrc/config-smp kernelsrc/.config
-    %endif
-    echo "CONFIG_IPSEC=m" >> kernelsrc/.config
-    echo "CONFIG_IPSEC_IPIP=y" >> kernelsrc/.config
-    echo "CONFIG_IPSEC_AH=y" >> kernelsrc/.config
-    echo "CONFIG_IPSEC_AUTH_HMAC_MD5=y" >> kernelsrc/.config
-    echo "CONFIG_IPSEC_AUTH_HMAC_SHA1=y" >> kernelsrc/.config
-    echo "CONFIG_IPSEC_ESP=y" >> kernelsrc/.config
-    echo "CONFIG_IPSEC_ENC_3DES=y" >> kernelsrc/.config
-    echo "CONFIG_IPSEC_IPCOMP=y" >> kernelsrc/.config
-    echo "CONFIG_IPSEC_DEBUG=y" >> kernelsrc/.config
+%if %{with smp}
+rm -rf kernelsrc
+install -d kernelsrc
+lndir -silent /usr/src/linux kernelsrc
+mv kernelsrc/.config kernelsrc/.config.old
+cp kernelsrc/.config.old kernelsrc/.config
 
-    %{__make} precheck verset kpatch ocf confcheck module \
-        BIND9STATICLIBDIR=%{_libdir} \
-        FINALCONFDIR=%{_sysconfdir}/ipsec \
-        FINALCONFFILE=%{_sysconfdir}/ipsec/ipsec.conf \
-        INC_USRLOCAL=/usr \
-        INC_MANDIR=share/man \
-        FINALRCDIR=%{_sysconfdir}/rc.d/init.d \
-        FINALLIBEXECDIR=%{_libdir}/ipsec \
-        KERNELSRC="`pwd`/kernelsrc"
-  %endif
+%if %{with dist_kernel}
+rm -rf kernelsrc/include/asm
+cd kernelsrc
+patch -R -p1 <../linux/net/Makefile.fs2_%{_kver}.patch
+patch -R -p1 <../linux/net/Config.in.fs2_%{_kver}.patch
+patch -R -p1 <../linux/net/ipv4/af_inet.c.fs2_%{_kver}.patch
+patch -R -p1 <../linux/Documentation/Configure.help.fs2_%{_kver}.patch
+cd ..
+rm -rf kernelsrc/{crypto,include/{freeswan,zlib,crypto},lib/{zlib,libfreeswan},net/ipsec}
+rm kernelsrc/include/{freeswan,pfkey,pfkeyv2}.h
+cp kernelsrc/config-smp kernelsrc/.config
 %endif
 
+echo "CONFIG_IPSEC=m" >> kernelsrc/.config
+echo "CONFIG_IPSEC_IPIP=y" >> kernelsrc/.config
+echo "CONFIG_IPSEC_AH=y" >> kernelsrc/.config
+echo "CONFIG_IPSEC_AUTH_HMAC_MD5=y" >> kernelsrc/.config
+echo "CONFIG_IPSEC_AUTH_HMAC_SHA1=y" >> kernelsrc/.config
+echo "CONFIG_IPSEC_ESP=y" >> kernelsrc/.config
+echo "CONFIG_IPSEC_ENC_3DES=y" >> kernelsrc/.config
+echo "CONFIG_IPSEC_IPCOMP=y" >> kernelsrc/.config
+echo "CONFIG_IPSEC_DEBUG=y" >> kernelsrc/.config
+%{__make} precheck verset kpatch ocf confcheck module \
+	BIND9STATICLIBDIR=%{_libdir} \
+	FINALCONFDIR=%{_sysconfdir}/ipsec \
+	FINALCONFFILE=%{_sysconfdir}/ipsec/ipsec.conf \
+	INC_USRLOCAL=/usr \
+	INC_MANDIR=share/man \
+	FINALRCDIR=%{_sysconfdir}/rc.d/init.d \
+	FINALLIBEXECDIR=%{_libdir}/ipsec \
+	KERNELSRC="`pwd`/kernelsrc"
+%endif
+
+%endif
 
 %{__make} programs \
-        BIND9STATICLIBDIR=%{_libdir} \
-        FINALCONFDIR=%{_sysconfdir}/ipsec \
-        FINALCONFFILE=%{_sysconfdir}/ipsec/ipsec.conf \
-        INC_USRLOCAL=/usr \
-        INC_MANDIR=share/man \
-        FINALRCDIR=%{_sysconfdir}/rc.d/init.d \
-        FINALLIBEXECDIR=%{_libdir}/ipsec \
-        KERNELSRC="`pwd`/kernelsrc"
+	BIND9STATICLIBDIR=%{_libdir} \
+	FINALCONFDIR=%{_sysconfdir}/ipsec \
+	FINALCONFFILE=%{_sysconfdir}/ipsec/ipsec.conf \
+	INC_USRLOCAL=/usr \
+	INC_MANDIR=share/man \
+	FINALRCDIR=%{_sysconfdir}/rc.d/init.d \
+	FINALLIBEXECDIR=%{_libdir}/ipsec \
+	KERNELSRC="`pwd`/kernelsrc"
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -203,34 +207,36 @@ install -d $RPM_BUILD_ROOT{%{_sysconfdir}/ipsec,/etc/rc.d/init.d,/var/run/pluto}
 %{__make} install \
 	BIND9STATICLIBDIR=%{_libdir} \
 	DESTDIR="$RPM_BUILD_ROOT" \
-        FINALCONFDIR=%{_sysconfdir}/ipsec \
+	FINALCONFDIR=%{_sysconfdir}/ipsec \
 	FINALCONFFILE=%{_sysconfdir}/ipsec/ipsec.conf \
 	FINALRCDIR=%{_sysconfdir}/rc.d/init.d \
 	FINALLIBEXECDIR=%{_libdir}/ipsec \
 	FINALEXAMPLECONFDIR=/usr/share/doc/%{name}-%{version} \
-        INC_USRLOCAL=/usr \
-        INC_MANDIR=share/man
+	INC_USRLOCAL=/usr \
+	INC_MANDIR=share/man
 
 
 %if %{with x509}
-  install -d  $RPM_BUILD_ROOT%{_sysconfdir}/ipsec/ipsec.d
-  for i in crls cacerts private policies; do
+install -d  $RPM_BUILD_ROOT%{_sysconfdir}/ipsec/ipsec.d
+for i in crls cacerts private policies; do
 	install -d  $RPM_BUILD_ROOT%{_sysconfdir}/ipsec/ipsec.d/$i
-  done
-  for i in CHANGES README; do
+done
+for i in CHANGES README; do
 	install  %{x509ver}-%{name}-%{version}/$i $i.x509 ;
-  done
+done
 %endif
 
 bzip2 -dc %{SOURCE1} | tar xf - -C $RPM_BUILD_ROOT%{_mandir}
 
 %if %{with modules}
-  install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc
-  install ipsec.o $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc
-  %if %{with smp}
-    install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/misc
-    install linux/net/ipsec/ipsec.o $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/misc
-  %endif
+install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc
+install ipsec.o $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc
+
+%if %{with smp}
+install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/misc
+install linux/net/ipsec/ipsec.o $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/misc
+%endif
+
 %endif
 
 %clean
@@ -241,9 +247,9 @@ rm -rf $RPM_BUILD_ROOT
 # not already exist
 if [ ! -f %{_sysconfdir}/ipsec/ipsec.secrets ];
 then
-    echo generate RSA private key...
-    /usr/sbin/ipsec newhostkey --output %{_sysconfdir}/ipsec/ipsec.secrets
-    chmod 600 %{_sysconfdir}/ipsec/ipsec.secrets
+	echo generate RSA private key...
+	/usr/sbin/ipsec newhostkey --output %{_sysconfdir}/ipsec/ipsec.secrets
+	chmod 600 %{_sysconfdir}/ipsec/ipsec.secrets
 fi
 
 /sbin/chkconfig --add ipsec
@@ -258,16 +264,16 @@ if [ "$1" = "0" ]; then
 	if [ -f /var/lock/subsys/ipsec ]; then
 		/etc/rc.d/init.d/ipsec stop >&2
 	fi
-        /sbin/chkconfig --del ipsec >&2
+	/sbin/chkconfig --del ipsec >&2
 fi
 
-%post   -n kernel-net-ipsec
+%post	-n kernel-net-ipsec
 %depmod %{_kernel_ver}
 
 %postun -n kernel-net-ipsec
 %depmod %{_kernel_ver}
 
-%post   -n kernel-smp-net-ipsec
+%post	-n kernel-smp-net-ipsec
 %depmod %{_kernel_ver}
 
 %postun -n kernel-smp-net-ipsec
