@@ -7,11 +7,11 @@
 %define x509ver		x509-1.4.8
 %define nat_tr_ver	0.6
 %define _25x_ver	20030825
+%define	_rel	0.1
 Summary:	Free IPSEC implemetation
 Summary(pl):	Publicznie dostêpna implementacja IPSEC
 Name:		freeswan
 Version:	2.04
-%define	_rel	0.1
 Release:	%{_rel}
 License:	GPL
 Group:		Networking/Daemons
@@ -29,14 +29,14 @@ Patch2:		%{name}-paths.patch
 Patch3:		%{name}-confread.patch
 URL:		http://www.freeswan.org/
 BuildRequires:	gmp-devel
-BuildRequires:	rpmbuild(macros) >= 1.118
-Requires:	rc-scripts
 %{?with_dist_kernel:%{?with_modules:BuildRequires:	kernel-doc}}
 %{?with_dist_kernel:%{?with_modules:BuildRequires:	kernel-headers}}
 %{?with_dist_kernel:%{?with_modules:BuildRequires:	kernel-source}}
+BuildRequires:	rpmbuild(macros) >= 1.118
 Requires(post,preun):	/sbin/chkconfig
 Requires:	gawk
 Requires:	gmp
+Requires:	rc-scripts
 # XFree86 is required to use usefull lndir
 %{?with_dist_kernel:%{?with_modules:BuildRequires:	XFree86}}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -61,9 +61,9 @@ Summary(pl):	Modu³ j±dra dla IPSEC
 Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 %{?with_dist_kernel:%requires_releq_kernel_up}
-Requires:	modutils >= 2.4.6-4
 Requires(post,postun):	/sbin/depmod
-Requires:	%{name} = %{version}
+Requires:	%{name} = %{version}-%{release}
+Requires:	modutils >= 2.4.6-4
 Conflicts:	kernel <= 2.4.20-9
 
 %description -n kernel-net-ipsec
@@ -78,9 +78,9 @@ Summary(pl):	Modu³ j±dra SMP dla IPSEC
 Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 %{?with_dist_kernel:%requires_releq_kernel_up}
-Requires:	modutils >= 2.4.6-4
 Requires(post,postun):	/sbin/depmod
-Requires:	%{name} = %{version}
+Requires:	%{name} = %{version}-%{release}
+Requires:	modutils >= 2.4.6-4
 Conflicts:	kernel-smp <= 2.4.20-9
 
 %description -n kernel-smp-net-ipsec
@@ -151,7 +151,7 @@ install linux/net/ipsec/ipsec.o .
 %if %{with smp}
 rm -rf kernelsrc
 install -d kernelsrc
-lndir -silent /usr/src/linux kernelsrc
+lndir -silent %{_kernelsrcdir} kernelsrc
 mv kernelsrc/.config kernelsrc/.config.old
 cp kernelsrc/.config.old kernelsrc/.config
 
