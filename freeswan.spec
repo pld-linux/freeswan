@@ -9,7 +9,7 @@
 %define _25x_ver	20030825
 %define	_rel	0.1
 Summary:	Free IPSEC implemetation
-Summary(pl):	Publicznie dostêpna implementacja IPSEC
+Summary(pl.UTF-8):   Publicznie dostÄ™pna implementacja IPSEC
 Name:		freeswan
 Version:	2.04
 Release:	%{_rel}
@@ -48,16 +48,16 @@ build secure tunnels through untrusted networks. The basic idea of
 IPsec is to provide security functions (authentication and encryption)
 at the IP (Internet Protocol) level.
 
-%description -l pl
-Ten pakiet zawiera demona i narzêdzia FreeS/WAN. FreeS/WAN jest woln±
-implementacj± protoko³u IPsec dla Linuksa. Umo¿liwia zestawianie
+%description -l pl.UTF-8
+Ten pakiet zawiera demona i narzÄ™dzia FreeS/WAN. FreeS/WAN jest wolnÄ…
+implementacjÄ… protokoÅ‚u IPsec dla Linuksa. UmoÅ¼liwia zestawianie
 bezpiecznych tuneli przez niezaufane sieci. Podstawowa idea IPsec to
-zapewnienie funkcji bezpieczeñstwa (autentykacji i szyfrowania) na
+zapewnienie funkcji bezpieczeÅ„stwa (autentykacji i szyfrowania) na
 poziomie IP.
 
 %package -n kernel-net-ipsec
 Summary:	Kernel module for Linux IPSEC
-Summary(pl):	Modu³ j±dra dla IPSEC
+Summary(pl.UTF-8):   ModuÅ‚ jÄ…dra dla IPSEC
 Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 %{?with_dist_kernel:%requires_releq_kernel_up}
@@ -69,12 +69,12 @@ Conflicts:	kernel <= 2.4.20-9
 %description -n kernel-net-ipsec
 Kernel module for FreeS/WAN.
 
-%description -n kernel-net-ipsec -l pl
-Modu³ j±dra wykorzystywany przez FreeS/WAN.
+%description -n kernel-net-ipsec -l pl.UTF-8
+ModuÅ‚ jÄ…dra wykorzystywany przez FreeS/WAN.
 
 %package -n kernel-smp-net-ipsec
 Summary:	SMP kernel module for Linux IPSEC
-Summary(pl):	Modu³ j±dra SMP dla IPSEC
+Summary(pl.UTF-8):   ModuÅ‚ jÄ…dra SMP dla IPSEC
 Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 %{?with_dist_kernel:%requires_releq_kernel_up}
@@ -86,8 +86,8 @@ Conflicts:	kernel-smp <= 2.4.20-9
 %description -n kernel-smp-net-ipsec
 SMP kernel module for FreeS/WAN.
 
-%description -n kernel-smp-net-ipsec -l pl
-Modu³ j±dra SMP wykorzystywany przez FreeS/WAN.
+%description -n kernel-smp-net-ipsec -l pl.UTF-8
+ModuÅ‚ jÄ…dra SMP wykorzystywany przez FreeS/WAN.
 
 %prep
 %setup -q -a2 -a3
