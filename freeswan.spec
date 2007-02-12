@@ -7,7 +7,7 @@
 %define x509ver		 x509-1.0.2
 
 Summary:	Free IPSEC implemetation
-Summary(pl):	Publicznie dostêpna implementacja IPSEC
+Summary(pl.UTF-8):   Publicznie dostÄ™pna implementacja IPSEC
 Name:		freeswan
 Version:	2.00pre2
 Release:	0.1
@@ -48,18 +48,18 @@ generation) and is optional for the current IP, version 4.
 FreeS/WAN is a freely-distributable implementation of IPSEC protocol.
 FreeS/WAN utilities%{?!_without_x509: compiled with X.509 certificate support}.
 
-%description -l pl
-Podstawowa idea IPSEC to zapewnienie funkcji bezpieczeñstwa
-(autentykacji i szyfrowania) na poziomie IP. Bêdzie wymagany do IP w
-wersji 6 (znanego tak¿e jako IPng, IP nastêpnej generacji) i jest
+%description -l pl.UTF-8
+Podstawowa idea IPSEC to zapewnienie funkcji bezpieczeÅ„stwa
+(autentykacji i szyfrowania) na poziomie IP. BÄ™dzie wymagany do IP w
+wersji 6 (znanego takÅ¼e jako IPng, IP nastÄ™pnej generacji) i jest
 opcjonalny dla aktualnego IP, w wersji 4.
 
-FreeS/WAN jest darmow± implementacj± protoko³u IPSEC.
+FreeS/WAN jest darmowÄ… implementacjÄ… protokoÅ‚u IPSEC.
 
 %if %{klips}
 %package -n kernel-%{_kernel_ver}-ipsec
 Summary: FreeS/WAN IPSec kernel module
-Summary(pl): Modu³ IPSec do j±dra
+Summary(pl.UTF-8):   ModuÅ‚ IPSec do jÄ…dra
 Group: System Environment/Kernel
 Requires: freeswan
 %endif
@@ -68,8 +68,8 @@ Requires: freeswan
 %description -n kernel-%{_kernel_ver}-ipsec
 FreeS/WAN IPSec Kernel Module (KLIPS)
 
-%description -l pl 
-Modu³ j±dra do IPSec
+%description -l pl.UTF-8 
+ModuÅ‚ jÄ…dra do IPSec
 %endif
 
 
