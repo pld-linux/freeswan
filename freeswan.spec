@@ -9,7 +9,7 @@
 %define _25x_ver	20030825
 %define	_rel	0.1
 Summary:	Free IPSEC implemetation
-Summary(pl.UTF-8):   Publicznie dostępna implementacja IPSEC
+Summary(pl.UTF-8):	Publicznie dostępna implementacja IPSEC
 Name:		freeswan
 Version:	2.04
 Release:	%{_rel}
@@ -57,7 +57,7 @@ poziomie IP.
 
 %package -n kernel-net-ipsec
 Summary:	Kernel module for Linux IPSEC
-Summary(pl.UTF-8):   Moduł jądra dla IPSEC
+Summary(pl.UTF-8):	Moduł jądra dla IPSEC
 Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 %{?with_dist_kernel:%requires_releq_kernel_up}
@@ -74,7 +74,7 @@ Moduł jądra wykorzystywany przez FreeS/WAN.
 
 %package -n kernel-smp-net-ipsec
 Summary:	SMP kernel module for Linux IPSEC
-Summary(pl.UTF-8):   Moduł jądra SMP dla IPSEC
+Summary(pl.UTF-8):	Moduł jądra SMP dla IPSEC
 Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 %{?with_dist_kernel:%requires_releq_kernel_up}
