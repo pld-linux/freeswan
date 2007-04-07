@@ -33,12 +33,12 @@ BuildRequires:	gmp-devel
 %{?with_dist_kernel:%{?with_modules:BuildRequires:	kernel-headers}}
 %{?with_dist_kernel:%{?with_modules:BuildRequires:	kernel-source}}
 BuildRequires:	rpmbuild(macros) >= 1.118
+# for useful lndir
+%{?with_modules:BuildRequires:	xorg-util-lndir}
 Requires(post,preun):	/sbin/chkconfig
 Requires:	gawk
 Requires:	gmp
 Requires:	rc-scripts
-# XFree86 is required to use usefull lndir
-%{?with_dist_kernel:%{?with_modules:BuildRequires:	XFree86}}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
