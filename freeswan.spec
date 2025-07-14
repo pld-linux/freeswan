@@ -91,10 +91,10 @@ Moduł jądra SMP wykorzystywany przez FreeS/WAN.
 
 %prep
 %setup -q -a2 -a3
-%patch0 -p1
-%patch1 -p1
+%patch -P0 -p1
+%patch -P1 -p1
 %{?with_x509:patch -p1 -s <%{x509ver}-%{name}-%{version}/freeswan.diff}
-%patch3 -p1
+%patch -P3 -p1
 %{?with_NAT:patch -p1 -s <NAT-Traversal-%{nat_tr_ver}/NAT-Traversal-%{nat_tr_ver}-freeswan-2.00-x509-1.3.5.diff}
 
 %build
